@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="te">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>వాస్తు దిక్సూచి – Telugu Vastu Compass</title>
+<meta name="description" content="Telugu Vaastu compass: find your house or flat facing, check every room's direction, and get Vastu tips.">
+<meta name="theme-color" content="#2C3226">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@400;500;600;700&family=Ramabhadra&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --kallapi:#2C3226;      /* cow-dung washed floor */
+  --kallapi-2:#363D2E;
+  --rule:#4C5442;
+  --muggu:#EFECDF;        /* rice-flour white */
+  --muggu-dim:#B0B29E;
+  --pasupu:#E9AE2C;       /* turmeric */
+  --kumkum:#BE3128;       /* vermilion */
+  --kumkum-lite:#F08A7C;
+  --mamidi:#8DB650;       /* mango leaf */
+  --ink:#1F241A;
+  --display:"Ramabhadra","Noto Sans Telugu",system-ui,sans-serif;
+  --body:"Anek Telugu","Noto Sans Telugu","Mandali",system-ui,sans-serif;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--kallapi);color:var(--muggu)}
+body{font-family:var(--body);font-size:17px;line-height:1.55;-webkit-tap-highlight-color:transparent;min-height:100vh}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--pasupu);outline-offset:2px;border-radius:6px}
+h1,h2,h3{font-weight:600;line-height:1.25;margin:0}
+p{margin:0}
+.en{font-size:.86em;color:var(--muggu-dim);font-weight:400}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 6px;max-width:560px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{flex:none}
+.brand h1{font-family:var(--display);font-weight:400;font-size:22px;color:var(--pasupu);letter-spacing:.01em}
+.brand .en{display:block;font-size:12.5px;margin-top:-2px}
+.lang-note{font-size:13px;color:var(--muggu-dim)}
+
+main{max-width:560px;margin:0 auto;padding:0 20px calc(96px + var(--safe-b))}
+.view{display:none}
+.view.on{display:block}
+
+/* threshold border: turmeric band with kumkum dots, like a gadapa */
+.gadapa{height:14px;margin:6px 0 18px;background:
+  radial-gradient(circle at 7px 7px,var(--kumkum) 0 3.2px,transparent 3.6px) 0 0/28px 14px,
+  var(--pasupu);border-radius:2px}
+
+/* ---------- compass view ---------- */
+.readout{text-align:center;margin-top:4px}
+.dir-te{font-family:var(--display);font-size:clamp(46px,14vw,64px);line-height:1.3;color:var(--muggu)}
+.dir-sub{font-size:17px;color:var(--muggu-dim);margin-top:2px}
+.dir-sub b{color:var(--pasupu);font-weight:600;font-variant-numeric:tabular-nums}
+.vidisha-tag{display:inline-block;font-size:13px;padding:1px 10px;border:1px solid var(--rule);border-radius:99px;margin-left:6px;color:var(--muggu-dim)}
+.dial-wrap{position:relative;width:min(100%,400px);margin:10px auto 6px;aspect-ratio:1;touch-action:none}
+.dial-wrap svg{width:100%;height:100%;display:block}
+#dialRot{transition:none}
+.hold-on .dir-te{color:var(--pasupu)}
+.sensor-msg{text-align:center;font-size:15px;color:var(--muggu-dim);min-height:24px;margin:2px 0 10px}
+.sensor-msg.warn{color:var(--kumkum-lite)}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:12px 20px;font-weight:600;font-size:16px;cursor:pointer;background:var(--pasupu);color:var(--ink);min-height:48px}
+.btn.ghost{background:transparent;color:var(--muggu);box-shadow:inset 0 0 0 1.5px var(--rule)}
+.btn.small{padding:8px 14px;min-height:40px;font-size:15px}
+.btn[aria-pressed="true"]{background:var(--kumkum);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.5}
+.btn .en{color:inherit;opacity:.75}
+
+.here{margin-top:26px}
+.here-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:10px}
+.here-head h2{font-size:20px}
+.meta{font-size:15px;color:var(--muggu-dim)}
+.meta span{color:var(--muggu)}
+
+/* do / don't lists */
+.dd{display:grid;gap:18px;margin-top:14px}
+.dd h3{font-size:16px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.dd ul{list-style:none;margin:0;padding:0}
+.dd li{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:7px 0;border-top:1px dashed var(--rule)}
+.dd li:first-child{border-top:0}
+.dd li .en{display:block}
+.mark{width:18px;height:18px;margin-top:4px}
+.yes h3{color:var(--mamidi)}
+.no h3{color:var(--kumkum-lite)}
+
+/* ---------- shared blocks ---------- */
+.section-title{font-size:23px;margin-top:6px}
+.section-title + .en{display:block;margin-bottom:12px}
+.step{padding:18px 0;border-top:1px dashed var(--rule)}
+.step:first-of-type{border-top:0}
+.step h3{font-size:18px;margin-bottom:6px}
+.step p{color:var(--muggu)}
+.step p.en{margin-top:2px;color:var(--muggu-dim)}
+.seg{display:inline-flex;background:var(--kallapi-2);border-radius:12px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:9px 16px;cursor:pointer;color:var(--muggu-dim);font-weight:600;min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--muggu);color:var(--ink)}
+.seg button[aria-pressed="true"] .en{color:var(--ink);opacity:.75}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:0;background:var(--kallapi-2);border-radius:99px;padding:8px 14px;cursor:pointer;font-size:15px;min-height:42px}
+.chip[aria-pressed="true"]{background:var(--muggu);color:var(--ink)}
+.chip .en{color:inherit;opacity:.7}
+.live-mini{display:flex;align-items:center;gap:14px;margin:14px 0;padding:12px 14px;background:var(--kallapi-2);border-radius:14px}
+.live-mini svg{flex:none}
+.live-mini b{font-family:var(--display);font-weight:400;font-size:24px;display:block;line-height:1.2}
+.live-mini b .en{font-family:var(--body);font-size:14px;display:block;line-height:1.3}
+.live-mini .deg{color:var(--pasupu);font-variant-numeric:tabular-nums}
+
+.verdict{display:inline-block;font-size:14px;font-weight:600;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.v-best{background:var(--mamidi);color:var(--ink)}
+.v-ok{background:var(--pasupu);color:var(--ink)}
+.v-bad{background:var(--kumkum);color:#fff}
+.v-none{background:var(--kallapi-2);color:var(--muggu-dim)}
+
+.result{margin-top:14px}
+.result .big{font-family:var(--display);font-size:38px;line-height:1.15;color:var(--pasupu)}
+.result ul{margin:10px 0 0;padding-left:20px}
+.result li{margin:6px 0}
+.note{font-size:15px;color:var(--muggu-dim);margin-top:10px}
+.note b{color:var(--muggu);font-weight:600}
+
+/* plan diagram for door */
+.plan{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+.plan svg{width:100%;max-width:300px;margin:0 auto;display:block}
+.plan .seg-btn{cursor:pointer}
+.door-opts{display:grid;gap:8px}
+.door-opt{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;border:0;background:var(--kallapi-2);border-radius:12px;padding:10px 14px;cursor:pointer;min-height:52px}
+.door-opt[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--pasupu)}
+
+/* ---------- check view ---------- */
+.score{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:6px 0 16px}
+.score-num{font-family:var(--display);font-size:56px;line-height:1;color:var(--pasupu);font-variant-numeric:tabular-nums}
+.score-num small{font-size:20px;color:var(--muggu-dim);font-family:var(--body)}
+.dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--rule)}
+.dots i.f{background:var(--muggu)}
+.score-text{font-size:15px;color:var(--muggu-dim)}
+.score-text b{color:var(--muggu)}
+.group-title{font-size:19px;margin:22px 0 4px}
+.rows{list-style:none;margin:0;padding:0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;background:none;border:0;border-top:1px dashed var(--rule);padding:12px 2px;cursor:pointer;min-height:58px}
+.rows li:first-child .row{border-top:0}
+.row .nm{display:block}
+.row .nm .en{display:block;line-height:1.3}
+.row .rt{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:none}
+.row .zone{font-size:14px;color:var(--muggu-dim)}
+.q{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px dashed var(--rule)}
+.q:first-child{border-top:0}
+.yn{display:inline-flex;gap:4px;background:var(--kallapi-2);border-radius:10px;padding:3px}
+.yn button{border:0;background:transparent;border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--muggu-dim);font-weight:600;min-height:40px;min-width:52px}
+.yn button[aria-pressed="true"].good{background:var(--mamidi);color:var(--ink)}
+.yn button[aria-pressed="true"].badc{background:var(--kumkum);color:#fff}
+.issues{list-style:none;padding:0;margin:0}
+.issues li{padding:12px 0 12px 14px;border-left:3px solid var(--kumkum);margin:10px 0;background:linear-gradient(90deg,rgba(190,49,40,.12),transparent 70%)}
+.issues li.okish{border-left-color:var(--pasupu);background:linear-gradient(90deg,rgba(233,174,44,.10),transparent 70%)}
+.issues h4{margin:0 0 4px;font-size:16px}
+.issues p{font-size:15.5px}
+.empty{color:var(--muggu-dim);font-size:15px;padding:8px 0}
+
+/* ---------- guide view ---------- */
+.grid9{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:14px 0 6px;aspect-ratio:1;max-width:360px;margin-inline:auto;background:var(--rule);padding:4px;border-radius:6px}
+.grid9 button{border:0;background:var(--kallapi-2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px;border-radius:3px;min-height:64px}
+.grid9 button b{font-family:var(--display);font-weight:400;font-size:clamp(15px,4.6vw,20px);line-height:1.15}
+.grid9 button .en{font-size:12px;line-height:1.2}
+.grid9 button[aria-pressed="true"]{background:var(--pasupu);color:var(--ink)}
+.grid9 button[aria-pressed="true"] .en{color:var(--ink)}
+.grid9 button.ok{position:relative}
+.grid9 button .v{font-size:11.5px;font-weight:600;border-radius:99px;padding:0 7px;margin-top:2px}
+.compass-n{text-align:center;font-size:13px;color:var(--muggu-dim)}
+details{border-top:1px dashed var(--rule);padding:4px 0}
+details:last-of-type{border-bottom:1px dashed var(--rule)}
+summary{cursor:pointer;padding:12px 0;font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--pasupu);font-size:22px;line-height:1}
+details[open] summary::after{content:"−"}
+details ul{margin:0 0 12px;padding-left:20px}
+details li{margin:7px 0}
+.disclaimer{font-size:14px;color:var(--muggu-dim);margin-top:24px}
+
+/* ---------- bottom tabs ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ink);display:flex;justify-content:center;padding:6px 6px calc(6px + var(--safe-b));border-top:1px solid var(--rule);z-index:5}
+.tabs-in{display:grid;grid-template-columns:repeat(4,1fr);width:100%;max-width:560px}
+.tabs button{border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;color:var(--muggu-dim);font-size:13.5px;font-weight:600;border-radius:10px;min-height:56px}
+.tabs button svg{width:24px;height:24px}
+.tabs button[aria-selected="true"]{color:var(--pasupu)}
+.tabs button .en{font-size:11px;color:inherit;opacity:.8;margin-top:-3px}
+
+/* ---------- sheet ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,12,8,.6);z-index:9;display:none}
+.scrim.on{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--kallapi);border-radius:18px 18px 0 0;border-top:3px solid var(--pasupu);max-height:92vh;overflow:auto;transform:translateY(105%);transition:transform .26s ease-out;padding:10px 20px calc(24px + var(--safe-b))}
+.sheet.on{transform:none}
+.sheet-in{max-width:520px;margin:0 auto}
+.grab{width:44px;height:5px;border-radius:9px;background:var(--rule);margin:2px auto 12px}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sheet h2{font-size:22px}
+.x{border:0;background:var(--kallapi-2);border-radius:50%;width:42px;height:42px;cursor:pointer;font-size:22px;flex:none}
+.pick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0 8px}
+.pick-grid button{border:0;background:var(--kallapi-2);border-radius:10px;padding:8px 4px;cursor:pointer;min-height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.pick-grid button b{font-weight:600;font-size:15.5px;line-height:1.2}
+.pick-grid button .en{font-size:12px}
+.pick-grid button .v{font-size:11px;font-weight:700;border-radius:99px;padding:0 7px}
+.pick-grid button[aria-pressed="true"]{box-shadow:inset 0 0 0 2.5px var(--muggu)}
+.sheet .verdict-box{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--kallapi-2)}
+.sheet .verdict-box p{margin-top:6px}
+
+@media (prefers-reduced-motion: reduce){
+  .sheet{transition:none}
+}
+@media (min-width:700px){
+  .dd{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="#EFECDF" stroke-width="1.6" stroke-dasharray="0.1 4.4" stroke-linecap="round"/>
+      <path d="M20 5 L24 20 L20 35 L16 20 Z" fill="none" stroke="#EFECDF" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M20 5 L24 20 L16 20 Z" fill="#BE3128"/>
+      <circle cx="20" cy="20" r="2.4" fill="#E9AE2C"/>
+    </svg>
+    <div><h1>వాస్తు దిక్సూచి</h1><span class="en">Telugu Vastu Compass</span></div>
+  </div>
+</header>
+
+<main>
+<!-- ============ COMPASS ============ -->
+<section class="view on" id="v-compass" aria-labelledby="t-compass">
+  <div class="readout" aria-live="polite">
+    <div class="dir-te" id="dirTe">ఉత్తరం</div>
+    <div class="dir-sub"><span id="dirEn">North</span>, <b id="deg">0°</b><span id="vidTag"></span></div>
+  </div>
+  <div class="dial-wrap" id="dialWrap"><svg id="dial" viewBox="-200 -200 400 400" role="img" aria-label="దిక్సూచి / compass dial"></svg></div>
+  <p class="sensor-msg" id="sensorMsg">దిక్సూచి ప్రారంభించడానికి కింద బటన్ నొక్కండి. <span class="en">Tap the button below to start.</span></p>
+  <div class="btn-row">
+    <button class="btn" id="btnStart">దిక్సూచి ప్రారంభించు <span class="en">Start</span></button>
+    <button class="btn ghost" id="btnHold" aria-pressed="false">నిలుపు <span class="en">Hold</span></button>
+  </div>
+
+  <div class="here" id="here"></div>
+</section>
+
+<!-- ============ FACING ============ -->
+<section class="view" id="v-facing" aria-labelledby="t-facing">
+  <h2 class="section-title">మీ ఇంటి ముఖ దిశ</h2>
+  <span class="en">Find which way your house or flat faces, and check the main door.</span>
+  <div class="gadapa" aria-hidden="true"></div>
+
+  <div class="step">
+    <h3>1. మీది ఏది? <span class="en">Which do you have?</span></h3>
+    <div class="seg" role="group" aria-label="Home type" data-typeseg>
+      <button data-type="house" aria-pressed="true">ఇల్లు <span class="en">House</span></button>
+      <button data-type="apartment" aria-pressed="false">అపార్ట్‌మెంట్ <span class="en">Flat</span></button>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>2. ముఖ దిశ కొలవండి <span class="en">Measure the facing</span></h3>
+    <p id="facingHow"></p>
+    <div class="live-mini">
+      <svg width="54" height="54" viewBox="-30 -30 60 60" aria-hidden="true"><circle r="27" fill="none" stroke="#4C5442" stroke-width="2"/><g id="miniNeedle"><path d="M0 -24 L6 0 L0 24 L-6 0Z" fill="#EFECDF"/><path d="M0 -24 L6 0 L-6 0Z" fill="#BE3128"/></g><circle r="3" fill="#E9AE2C"/></svg>
+      <div><b id="miniDir">—</b><span class="deg" id="miniDeg">దిక్సూచి ఆగి ఉంది</span></div>
+    </div>
+    <div class="btn-row" style="justify-content:flex-start">
+      <button class="btn" id="btnRecord">ఈ దిశను నమోదు చేయి <span class="en">Record</span></button>
+    </div>
+    <p class="note">లేదా చేతితో ఎంచుకోండి <span class="en">or choose by hand</span></p>
+    <div class="chips" id="facingChips"></div>
+  </div>
+
+  <div class="step" id="facingResult" hidden></div>
+  <div class="step" id="doorStep" hidden></div>
+  <div class="step" id="veedhiStep" hidden></div>
+</section>
+
+<!-- ============ CHECK ============ -->
+<section class="view" id="v-check" aria-labelledby="t-check">
+  <h2 class="section-title">ఇంటి వాస్తు తనిఖీ</h2>
+  <span class="en">Mark where each room and item is. The score updates as you go.</span>
+  <div class="gadapa" aria-hidden="true"></div>
+  <div class="seg" role="group" aria-label="Home type" data-typeseg>
+    <button data-type="house" aria-pressed="true">ఇల్లు <span class="en">House</span></button>
+    <button data-type="apartment" aria-pressed="false">అపార్ట్‌మెంట్ <span class="en">Flat</span></button>
+  </div>
+  <div class="score" id="score"></div>
+  <p class="note">దిక్సూచితో గది దిశ తెలుసుకోవాలంటే: ఇంటి మధ్యలో నిలబడి ఫోన్ పైభాగాన్ని ఆ గది వైపు చూపండి. <span class="en">To find a room's zone, stand at the centre of the home and point the top of the phone at the room.</span></p>
+
+  <h3 class="group-title">సింహద్వారం <span class="en">Main door</span></h3>
+  <ul class="rows" id="doorRow"></ul>
+  <h3 class="group-title">గదులు, నిర్మాణాలు <span class="en">Rooms and fixtures</span></h3>
+  <ul class="rows" id="itemRows"></ul>
+  <h3 class="group-title">సాధారణ ప్రశ్నలు <span class="en">General questions</span></h3>
+  <div id="questions"></div>
+  <h3 class="group-title">సరిచేయాల్సినవి <span class="en">Things to fix, with remedies</span></h3>
+  <ul class="issues" id="issues"></ul>
+  <div class="btn-row" style="justify-content:flex-start;margin-top:18px">
+    <button class="btn" id="btnShare">నివేదిక పంపు <span class="en">Share report</span></button>
+    <button class="btn ghost" id="btnReset">మళ్ళీ మొదలుపెట్టు <span class="en">Start over</span></button>
+  </div>
+</section>
+
+<!-- ============ GUIDE ============ -->
+<section class="view" id="v-guide" aria-labelledby="t-guide">
+  <h2 class="section-title">అష్ట దిక్కుల నియమాలు</h2>
+  <span class="en">Tap a zone to see what should and should not be there.</span>
+  <div class="gadapa" aria-hidden="true"></div>
+  <p class="compass-n">ఉత్తరం పైన <span class="en">North at top</span></p>
+  <div class="grid9" id="grid9"></div>
+  <div id="zoneDetail"></div>
+  <h3 class="group-title" style="margin-top:28px">వాస్తు చిట్కాలు <span class="en">Vastu tips</span></h3>
+  <div id="tips"></div>
+  <p class="disclaimer">వాస్తు సంప్రదాయ మార్గదర్శకం మాత్రమే. గోడలు పడగొట్టడం, మార్పులు చేసే ముందు అనుభవం ఉన్న వాస్తు నిపుణుడిని, ఇంజనీర్‌ను సంప్రదించండి. <span class="en">Vastu is traditional guidance. Before any structural change, consult an experienced Vastu expert and a civil engineer. Phone compasses can be off near metal, magnets and wiring.</span></p>
+</section>
+</main>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="tabs-in" role="tablist">
+    <button role="tab" id="t-compass" aria-selected="true" data-view="v-compass">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 4.5l2.6 7.5-2.6 7.5-2.6-7.5z" stroke-linejoin="round"/></svg>
+      దిక్సూచి<span class="en">Compass</span></button>
+    <button role="tab" id="t-facing" aria-selected="false" data-view="v-facing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg>
+      ముఖ దిశ<span class="en">Facing</span></button>
+    <button role="tab" id="t-check" aria-selected="false" data-view="v-check">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M9.3 4v16M14.7 4v16M4 9.3h16M4 14.7h16"/></svg>
+      తనిఖీ<span class="en">Check</span></button>
+    <button role="tab" id="t-guide" aria-selected="false" data-view="v-guide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5.5c3-1.3 5.7-1 8 .8 2.3-1.8 5-2.1 8-.8v13c-3-1.3-5.7-1-8 .8-2.3-1.8-5-2.1-8-.8z" stroke-linejoin="round"/><path d="M12 6.3v13"/></svg>
+      నియమాలు<span class="en">Guide</span></button>
+  </div>
+</nav>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheet-in" id="sheetIn"></div></div>
+
+<script>
+/* ===== Vastu data (Telugu + English) ===== */
+const ZONES = {
+  N:  {te:'ఉత్తరం',  en:'North',      deg:0,   deity:['కుబేరుడు','Kubera'], planet:['బుధుడు','Mercury'], gov:['ధనం, అవకాశాలు','Wealth and opportunity'],
+       yes:[['సింహద్వారం (ఈశాన్యం వైపు భాగంలో)','Main door, on the north-east side of the north wall'],['హాలు / లివింగ్ రూమ్','Living room'],['ఎక్కువ ఖాళీ స్థలం, పెద్ద కిటికీలు','More open space and large windows'],['నేల పల్లంగా (దక్షిణం కంటే తక్కువ ఎత్తు)','Floor lower than the south'],['సంపు, బోరుబావి (ఈశాన్యానికి దగ్గరగా)','Sump or borewell, close to the north-east'],['పచ్చిక, చిన్న మొక్కలు','Lawn and small plants']],
+       no:[['ఎత్తైన నిర్మాణాలు, పెద్ద చెట్లు','Tall structures or big trees'],['మెట్లు, బరువైన సామాను','Staircase or heavy furniture'],['మరుగుదొడ్డి, సెప్టిక్ ట్యాంక్','Toilet or septic tank'],['ఉత్తర వాయువ్యంలో సింహద్వారం','Main door at the north-west end of the north wall'],['చెత్త, పాత సామాను','Garbage or junk']]},
+  NE: {te:'ఈశాన్యం', en:'North-East', deg:45,  deity:['ఈశానుడు (శివుడు)','Ishana, Shiva'], planet:['గురువు','Jupiter'], gov:['దైవం, జ్ఞానం, ఆరోగ్యం','Divinity, wisdom, health'], elem:['జలం','Water'],
+       yes:[['పూజ గది','Pooja room'],['బోరుబావి, బావి, సంపు','Borewell, well or underground sump'],['ఖాళీ స్థలం, ఎక్కువ వెలుతురు','Open space and plenty of light'],['కిటికీలు, ద్వారాలు','Windows and doors'],['ఇంట్లోకెల్లా తక్కువ ఎత్తు, తక్కువ బరువు','Lowest and lightest part of the home'],['తులసి కోట, చిన్న మొక్కలు','Tulasi plant, small plants'],['ఈశాన్యం కొద్దిగా పెరగడం (శుభం)','A slightly extended NE corner (auspicious)']],
+       no:[['మరుగుదొడ్డి, సెప్టిక్ ట్యాంక్','Toilet or septic tank'],['వంటగది','Kitchen'],['మెట్లు','Staircase'],['ఓవర్‌హెడ్ ట్యాంక్','Overhead water tank'],['బీరువాలు, బరువైన సామాను','Almirahs and heavy furniture'],['చెప్పులు, చెత్తబుట్ట','Footwear or dustbin'],['ఈశాన్యం కోత లేదా మూసుకుపోవడం','A cut, rounded or blocked NE corner'],['యజమాని పడకగది','Master bedroom']]},
+  E:  {te:'తూర్పు',  en:'East',       deg:90,  deity:['ఇంద్రుడు','Indra'], planet:['సూర్యుడు','Sun'], gov:['ఆరోగ్యం, కీర్తి, అభివృద్ధి','Health, reputation, growth'],
+       yes:[['సింహద్వారం (ఈశాన్యం వైపు భాగంలో)','Main door, on the north-east side of the east wall'],['హాలు, వరండా','Living room, verandah'],['ఖాళీ స్థలం, ఉదయం ఎండ వచ్చే కిటికీలు','Open space and windows for morning sun'],['చదువు గది','Study room'],['స్నానాల గది (మరుగుదొడ్డి లేకుండా)','Bathing area only, no toilet'],['పడమర కంటే తక్కువ ఎత్తు','Lower than the west side']],
+       no:[['ఎత్తైన నిర్మాణాలు, పెద్ద చెట్లు','Tall structures or big trees'],['మెట్లు, బరువైన సామాను','Staircase or heavy furniture'],['మరుగుదొడ్డి','Toilet'],['తూర్పు ఆగ్నేయంలో సింహద్వారం','Main door at the south-east end of the east wall'],['చెత్త కుప్ప','Garbage heap']]},
+  SE: {te:'ఆగ్నేయం', en:'South-East', deg:135, deity:['అగ్ని','Agni'], planet:['శుక్రుడు','Venus'], gov:['అగ్ని, శక్తి, ఆరోగ్యం','Fire, energy, vitality'], elem:['అగ్ని','Fire'],
+       yes:[['వంటగది (అత్యుత్తమం)','Kitchen (the best place)'],['గ్యాస్ స్టవ్ ఆగ్నేయ మూలలో, తూర్పు ముఖంగా వంట','Stove in the SE corner, cook facing east'],['విద్యుత్ మీటర్, ఇన్వర్టర్, జనరేటర్','Electric meter, inverter, generator'],['దక్షిణ ఆగ్నేయంలో సింహద్వారం (ఉచ్చ)','Main door at the south-east end of the south wall (uchcha)']],
+       no:[['బోరుబావి, సంపు, నీటి గుంటలు','Borewell, sump or any water pit'],['పూజ గది','Pooja room'],['దంపతుల పడకగది','Couple\'s bedroom'],['తూర్పు ఆగ్నేయంలో సింహద్వారం (నీచ)','Main door at the south-east end of the east wall (neecha)'],['ఆగ్నేయం పెరగడం','SE corner extended']]},
+  S:  {te:'దక్షిణం', en:'South',      deg:180, deity:['యముడు','Yama'], planet:['కుజుడు','Mars'], gov:['ధర్మం, స్థిరత్వం','Discipline and stability'],
+       yes:[['పడకగదులు','Bedrooms'],['మెట్లు','Staircase'],['బరువైన సామాను, స్టోర్ రూమ్','Heavy furniture, store room'],['ఎత్తైన నేల, మందమైన ఎత్తైన గోడ','Higher floor, thicker and taller walls'],['పెద్ద చెట్లు','Big trees'],['బీరువా దక్షిణ గోడకు ఆనుకొని, తలుపు ఉత్తరం వైపు','Almirah against the south wall, opening to the north']],
+       no:[['బోరుబావి, సంపు, గుంటలు','Borewell, sump or pits'],['ఎక్కువ ఖాళీ స్థలం','Large open space'],['ఉత్తరం కంటే పల్లం','Lower than the north side'],['దక్షిణ నైరుతిలో సింహద్వారం (నీచ)','Main door at the south-west end of the south wall (neecha)']]},
+  SW: {te:'నైరుతి',  en:'South-West', deg:225, deity:['నిరృతి','Nirruti'], planet:['రాహువు','Rahu'], gov:['స్థిరత్వం, యజమాని బలం','Stability, strength of the head of family'], elem:['భూమి','Earth'],
+       yes:[['యజమాని పడకగది','Master bedroom'],['బీరువా, లాకర్ (ఉత్తరం వైపు తెరుచుకునేలా)','Almirah or locker, opening to the north'],['ఓవర్‌హెడ్ ట్యాంక్','Overhead water tank'],['మెట్లు','Staircase'],['బరువైన సామాను','Heavy furniture'],['ఇంట్లోకెల్లా ఎత్తైన నేల, మందమైన గోడలు','Highest floor level, thickest walls']],
+       no:[['సింహద్వారం','Main door'],['మరుగుదొడ్డి, సెప్టిక్ ట్యాంక్','Toilet or septic tank'],['బోరుబావి, సంపు, గుంటలు','Borewell, sump or any pit'],['వంటగది','Kitchen'],['ఖాళీ స్థలం, బాల్కనీ','Open space or balcony'],['నైరుతి పెరగడం','SW corner extended'],['పల్లంగా ఉండటం','Low floor level'],['పిల్లల పడకగది','Children\'s bedroom']]},
+  W:  {te:'పడమర',    en:'West',       deg:270, deity:['వరుణుడు','Varuna'], planet:['శని','Saturn'], gov:['లాభం, ఫలితాలు','Gains and results'],
+       yes:[['పిల్లల పడకగది','Children\'s bedroom'],['భోజనాల గది','Dining room'],['చదువు గది','Study room'],['మెట్లు, ఓవర్‌హెడ్ ట్యాంక్','Staircase, overhead tank'],['మరుగుదొడ్లు (పరవాలేదు)','Toilets (acceptable)'],['పడమర వాయువ్యంలో సింహద్వారం (ఉచ్చ)','Main door at the north-west end of the west wall (uchcha)']],
+       no:[['బోరుబావి, సంపు','Borewell or sump'],['ఎక్కువ ఖాళీ స్థలం','Large open space'],['తూర్పు కంటే పల్లం','Lower than the east side'],['పడమర నైరుతిలో సింహద్వారం (నీచ)','Main door at the south-west end of the west wall (neecha)']]},
+  NW: {te:'వాయువ్యం',en:'North-West', deg:315, deity:['వాయువు','Vayu'], planet:['చంద్రుడు','Moon'], gov:['సంబంధాలు, కదలిక','Relationships and movement'], elem:['వాయువు','Air'],
+       yes:[['అతిథి గది','Guest room'],['మరుగుదొడ్లు, స్నానాల గది','Toilets and bathrooms'],['సెప్టిక్ ట్యాంక్ (గోడలకు దూరంగా)','Septic tank, away from the walls'],['ధాన్యం స్టోర్, వాషింగ్ మెషిన్','Grain store, washing machine'],['వాహనాల పార్కింగ్','Vehicle parking'],['వంటగది (రెండో ఎంపిక)','Kitchen (second choice)'],['పడమర వాయువ్యంలో సింహద్వారం (ఉచ్చ)','Main door at the north-west end of the west wall (uchcha)']],
+       no:[['పూజ గది','Pooja room'],['యజమాని పడకగది','Master bedroom'],['ఉత్తర వాయువ్యంలో సింహద్వారం (నీచ)','Main door at the north-west end of the north wall (neecha)'],['వాయువ్యం పెరగడం','NW corner extended'],['బోరుబావి','Borewell']]},
+  C:  {te:'బ్రహ్మస్థానం', en:'Centre (Brahmasthanam)', deg:null, deity:['బ్రహ్మ','Brahma'], planet:['—','—'], gov:['ఇంటి ప్రాణం','The life of the home'], elem:['ఆకాశం','Space'],
+       yes:[['ఖాళీగా, వెలుతురుతో','Open and well lit'],['ముంగిలి / కోర్ట్‌యార్డ్','Courtyard'],['శుభ్రంగా, సామాను లేకుండా','Clean and free of clutter']],
+       no:[['స్తంభాలు, బీమ్‌లు','Pillars or beams'],['మరుగుదొడ్డి','Toilet'],['మెట్లు, లిఫ్ట్','Staircase or lift'],['వంటగది','Kitchen'],['బరువైన సామాను','Heavy furniture'],['సంపు, బోరుబావి','Sump or borewell']]}
+};
+const ORDER8 = ['N','NE','E','SE','S','SW','W','NW'];
+const GRID9 = ['NW','N','NE','W','C','E','SW','S','SE'];
+
+/* Rooms and fixtures. best / ok / anything else = avoid */
+const ITEMS = [
+ {id:'kitchen', te:'వంటగది', en:'Kitchen', w:2, scope:'both', best:['SE'], ok:['NW','E','S','W'],
+  tip:['స్టవ్ వంటగదిలో ఆగ్నేయ మూలలో, వంట చేసేటప్పుడు తూర్పు వైపు చూస్తూ ఉండాలి. సింక్, నీళ్లు ఈశాన్యం వైపు.','Stove in the SE corner of the kitchen, cook facing east. Sink and water on the NE side.'],
+  fix:['స్టవ్‌ను వంటగది ఆగ్నేయ మూలకు మార్చి తూర్పు ముఖంగా వండండి. ఈశాన్య వంటగది అయితే ఆ భాగాన్ని శుభ్రంగా, తేలికగా ఉంచి, వీలైనప్పుడు వంటగదిని ఆగ్నేయం లేదా వాయువ్యానికి మార్చండి.','Move the stove to the SE corner of the kitchen and cook facing east. If the kitchen is in the NE, keep it clean and light, and plan to shift it to the SE or NW when you can.']},
+ {id:'master', te:'యజమాని పడకగది', en:'Master bedroom', w:2, scope:'both', best:['SW'], ok:['S','W'],
+  tip:['మంచం గదిలో నైరుతి భాగంలో, తల దక్షిణం (లేదా తూర్పు) వైపు పెట్టి పడుకోవాలి. ఉత్తరం వైపు తల పెట్టకూడదు.','Bed in the SW part of the room, sleep with your head to the south (or east). Never head to the north.'],
+  fix:['వీలైతే ఇంటి పెద్దలు నైరుతి గదికి మారండి. లేకపోతే మంచాన్ని గదిలోని నైరుతి భాగంలో, తల దక్షిణం వైపు ఉండేలా పెట్టండి.','If possible, the head of the family should move to the SW room. Otherwise place the bed in the SW part of the current room, head to the south.']},
+ {id:'kids', te:'పిల్లల పడకగది', en:'Children\'s bedroom', w:1, scope:'both', best:['W'], ok:['NW','N','E','S'],
+  tip:['చదువుకునేటప్పుడు తూర్పు లేదా ఉత్తరం వైపు చూస్తూ కూర్చోవాలి.','Children should face east or north while studying.'],
+  fix:['పిల్లల మంచాన్ని ఆ గది నైరుతి భాగంలో పెట్టి, స్టడీ టేబుల్ తూర్పు/ఉత్తరం ముఖంగా ఉండేలా చూడండి.','Put the bed in the SW part of the room and turn the study table to face east or north.']},
+ {id:'guest', te:'అతిథి గది', en:'Guest room', w:1, scope:'both', best:['NW'], ok:['W','N','E','S'],
+  tip:['వాయువ్యం కదలికకు సంబంధించిన దిశ; అతిథులు ఎక్కువ కాలం ఉండరు.','North-west is the zone of movement, so guests stay comfortably but not too long.'],
+  fix:['నైరుతి గదిని అతిథులకు కాకుండా ఇంటి యజమానికి కేటాయించండి.','Keep the SW room for the head of the family rather than for guests.']},
+ {id:'pooja', te:'పూజ గది', en:'Pooja room', w:2, scope:'both', best:['NE'], ok:['E','N','W','C'],
+  tip:['దేవుని పటాలు తూర్పు లేదా పడమర గోడపై; పూజ చేసేటప్పుడు మీరు తూర్పు లేదా ఉత్తరం వైపు చూడాలి. మెట్ల కింద, మరుగుదొడ్డి పక్కన పూజ గది వద్దు.','Keep deities on the east or west wall so you face east or north while praying. Never under the stairs or next to a toilet.'],
+  fix:['పూజ స్థలాన్ని ఇంటి ఈశాన్యానికి, లేదా కనీసం ఆ గదిలోని ఈశాన్య మూలకు మార్చండి.','Shift the pooja to the NE of the home, or at least to the NE corner of the room.']},
+ {id:'living', te:'హాలు / లివింగ్ రూమ్', en:'Living room', w:1, scope:'both', best:['N','NE','E'], ok:['NW','W','S','SE','SW','C'],
+  tip:['బరువైన సోఫాలు గదిలో దక్షిణ, పడమర గోడల వైపు; ఈశాన్యం ఖాళీగా ఉంచండి.','Heavy sofas along the south and west walls; keep the NE corner open.'],
+  fix:['ఈశాన్య భాగంలో బరువైన సామాను తీసివేసి, నైరుతి వైపు పెట్టండి.','Move heavy pieces out of the NE side and into the SW side.']},
+ {id:'dining', te:'భోజనాల గది', en:'Dining area', w:1, scope:'both', best:['W'], ok:['E','N','S','NW','SE','NE','C'],
+  tip:['భోజనం చేసేటప్పుడు తూర్పు లేదా ఉత్తరం వైపు చూస్తూ కూర్చోవడం మంచిది.','Face east or north while eating.'],
+  fix:['భోజనాల బల్లను వంటగదికి దగ్గరగా పడమర భాగంలో పెట్టండి.','Place the dining table in the west, close to the kitchen.']},
+ {id:'toilet', te:'మరుగుదొడ్డి / బాత్రూమ్', en:'Toilet / bathroom', w:2, scope:'both', best:['NW','W'], ok:['S','SE'],
+  tip:['టాయిలెట్ సీటు ఉత్తరం-దక్షిణం దిశగా ఉండాలి. తలుపు ఎప్పుడూ మూసి ఉంచండి.','The toilet seat should be on the north-south axis. Keep the door closed.'],
+  fix:['తలుపు ఎప్పుడూ మూసి ఉంచండి, ఎగ్జాస్ట్ ఫ్యాన్ పెట్టి శుభ్రంగా, పొడిగా ఉంచండి. ఈశాన్యం లేదా బ్రహ్మస్థానంలో ఉంటే, మార్చడం గురించి వాస్తు నిపుణుడిని సంప్రదించండి.','Keep the door closed, fit an exhaust fan, keep it clean and dry. If it is in the NE or the centre, ask a Vastu expert about relocating it.']},
+ {id:'study', te:'చదువు గది', en:'Study room', w:1, scope:'both', best:['NE','E','N'], ok:['W','NW','S'],
+  tip:['చదువుకునేటప్పుడు తూర్పు లేదా ఉత్తరం వైపు చూడాలి; వెనక గోడ ఉండాలి.','Face east or north while studying, with a wall behind you.'],
+  fix:['స్టడీ టేబుల్‌ను గదిలోని తూర్పు లేదా ఉత్తర భాగానికి మార్చి, ఆ వైపు ముఖంగా కూర్చోండి.','Move the study table to the east or north side of the room and sit facing that way.']},
+ {id:'locker', te:'బీరువా / డబ్బు పెట్టె', en:'Almirah / cash locker', w:1, scope:'both', best:['SW','S'], ok:['W','NW'],
+  tip:['బీరువా దక్షిణ లేదా పడమర గోడకు ఆనుకొని, తలుపు ఉత్తరం (కుబేర దిశ) వైపు తెరుచుకోవాలి.','Place it against the south or west wall so it opens to the north, the direction of Kubera.'],
+  fix:['బీరువాను నైరుతి గది దక్షిణ గోడకు మార్చి, ఉత్తరం వైపు తెరుచుకునేలా పెట్టండి.','Move the almirah against the south wall of the SW room, opening to the north.']},
+ {id:'storage', te:'బరువైన సామాను / స్టోర్', en:'Heavy storage / store room', w:1, scope:'both', best:['SW'], ok:['S','W','NW','SE'],
+  tip:['దక్షిణ, పడమర భాగాలు బరువుగా, ఉత్తర, తూర్పు భాగాలు తేలికగా ఉండాలి.','South and west should be heavy; north and east light.'],
+  fix:['బరువైన సామానును ఈశాన్యం, ఉత్తరం, తూర్పు నుంచి తీసి నైరుతి వైపు పెట్టండి.','Move heavy items out of the NE, north and east, and into the SW.']},
+ {id:'balcony', te:'బాల్కనీ / వరండా', en:'Balcony / verandah', w:1, scope:'apartment', best:['N','E','NE'], ok:['NW','W','SE','S'],
+  tip:['బాల్కనీ ఉత్తరం, తూర్పు వైపు ఉంటే ఇంట్లోకి ఉదయం వెలుతురు, మంచి గాలి వస్తాయి.','A balcony on the north or east brings morning light and fresh air.'],
+  fix:['నైరుతి బాల్కనీలో బరువైన కుండీలు పెట్టి, ఆ వైపు తక్కువగా తెరిచి ఉంచండి.','Put heavy planters in a SW balcony and keep it less open.']},
+ {id:'stairs', te:'మెట్లు (ఉంటే)', en:'Staircase (if any)', w:1, scope:'both', best:['S','W','SW'], ok:['SE','NW'],
+  tip:['మెట్లు సవ్యదిశలో (క్లాక్‌వైస్) ఎక్కేలా, బేసి సంఖ్యలో ఉండాలి.','Stairs should climb clockwise, with an odd number of steps.'],
+  fix:['ఈశాన్య మెట్ల కింద ఏమీ నిల్వ చేయకండి, శుభ్రంగా ఉంచండి. పెద్ద మార్పుకు నిపుణుడిని సంప్రదించండి.','Keep the area under NE stairs clean and empty. Consult an expert before any rebuild.']},
+ {id:'borewell', te:'బోరుబావి / బావి', en:'Borewell / well', w:2, scope:'house', best:['NE'], ok:['N','E'],
+  tip:['బోరు ఈశాన్యంలో, ఈశాన్య మూల గీత (కర్ణ రేఖ)పై కాకుండా పక్కన ఉండాలి.','Borewell in the NE, beside the diagonal line rather than on it.'],
+  fix:['తప్పు దిశలో ఉన్న బోరును వాడకుండా ఉంటే మూసివేయండి; కొత్తది ఈశాన్యంలో వేయించండి.','If an unused borewell is in the wrong zone, seal it; dig any new one in the NE.']},
+ {id:'sump', te:'సంపు (భూగర్భ నీటి ట్యాంక్)', en:'Underground sump', w:2, scope:'house', best:['NE'], ok:['N','E'],
+  tip:['భూమి లోపల నీళ్లు ఈశాన్యం, ఉత్తరం, తూర్పుల్లో మాత్రమే.','Water below ground belongs only in the NE, north or east.'],
+  fix:['సంపును ఈశాన్యం, ఉత్తరం లేదా తూర్పుకు మార్చడం మంచిది.','Relocate the sump to the NE, north or east when possible.']},
+ {id:'septic', te:'సెప్టిక్ ట్యాంక్', en:'Septic tank', w:2, scope:'house', best:['NW'], ok:['W','S'],
+  tip:['సెప్టిక్ ట్యాంక్ ఇంటి గోడలకు, కాంపౌండ్ గోడకు తగలకుండా దూరంగా ఉండాలి.','Keep the septic tank clear of the house and compound walls.'],
+  fix:['ఈశాన్యం, నైరుతి, బ్రహ్మస్థానంలో ఉన్న సెప్టిక్ ట్యాంక్‌ను వాయువ్యానికి మార్చడం గురించి నిపుణుడిని సంప్రదించండి.','If the septic tank is in the NE, SW or centre, ask an expert about moving it to the NW.']},
+ {id:'ohtank', te:'ఓవర్‌హెడ్ ట్యాంక్', en:'Overhead tank', w:1, scope:'house', best:['SW'], ok:['W','S','NW'],
+  tip:['ఇంటి పైకప్పు మీద నైరుతిలో, ఇంట్లోకెల్లా ఎత్తుగా ఉండాలి.','On the roof in the SW, the highest point of the house.'],
+  fix:['ట్యాంకును నైరుతి లేదా పడమర వైపు మార్చండి; ఈశాన్యంలో బరువు వద్దు.','Move the tank to the SW or west; no weight on the NE.']},
+ {id:'parking', te:'వాహనాల పార్కింగ్', en:'Car parking', w:1, scope:'house', best:['NW','SE'], ok:['N','E','S','W'],
+  tip:['వాహనాలు ఉత్తరం లేదా తూర్పు ముఖంగా పార్క్ చేయండి.','Park vehicles facing north or east.'],
+  fix:['ఈశాన్యంలో పార్కింగ్ అయితే అక్కడ బరువైన వాహనాలు కాకుండా ఖాళీగా ఉంచండి.','Avoid parking heavy vehicles in the NE; keep it open.']},
+ {id:'trees', te:'పెద్ద చెట్లు', en:'Big trees', w:1, scope:'house', best:['SW','S','W'], ok:['NW','SE'],
+  tip:['పెద్ద చెట్లు దక్షిణ, పడమర వైపు; ఉత్తర, తూర్పుకు ఎండ అడ్డుకోకూడదు.','Big trees on the south and west, never blocking the morning sun.'],
+  fix:['ఈశాన్యం, తూర్పు, ఉత్తరాల్లో పెద్ద చెట్లు ఉంటే కొమ్మలు కత్తిరించి వెలుతురు వచ్చేలా చూడండి.','If big trees are in the NE, east or north, prune them so light comes in.']},
+ {id:'tulasi', te:'తులసి, చిన్న మొక్కలు', en:'Tulasi and small plants', w:1, scope:'both', best:['NE','N','E'], ok:['NW','W','C','SE'],
+  tip:['తులసి కోట ఈశాన్యం, ఉత్తరం లేదా తూర్పులో, ఇంటి నేల కంటే కొద్దిగా ఎత్తులో.','Tulasi in the NE, north or east, a little above floor level.'],
+  fix:['తులసిని ఈశాన్యం లేదా తూర్పుకు మార్చండి.','Move the tulasi to the NE or east.']},
+ {id:'electric', te:'మీటర్, ఇన్వర్టర్', en:'Electric meter, inverter', w:1, scope:'both', best:['SE'], ok:['S','NW','W','E'],
+  tip:['విద్యుత్ సామగ్రి అగ్ని దిశ అయిన ఆగ్నేయంలో.','Electricals belong in the SE, the fire zone.'],
+  fix:['ఇన్వర్టర్, బ్యాటరీలను ఆగ్నేయానికి మార్చండి.','Move the inverter and batteries to the SE.']}
+];
+
+/* Main door: 12 positions (wall + which end) */
+const DOOR = {
+  'E-NE':{r:'best', te:'తూర్పు ఈశాన్యం (ఉచ్చ)', en:'East wall, NE end (uchcha)'},
+  'E-M': {r:'ok',   te:'తూర్పు మధ్య', en:'East wall, middle'},
+  'E-SE':{r:'bad',  te:'తూర్పు ఆగ్నేయం (నీచ)', en:'East wall, SE end (neecha)'},
+  'N-NE':{r:'best', te:'ఉత్తర ఈశాన్యం (ఉచ్చ)', en:'North wall, NE end (uchcha)'},
+  'N-M': {r:'ok',   te:'ఉత్తర మధ్య', en:'North wall, middle'},
+  'N-NW':{r:'bad',  te:'ఉత్తర వాయువ్యం (నీచ)', en:'North wall, NW end (neecha)'},
+  'S-SE':{r:'best', te:'దక్షిణ ఆగ్నేయం (ఉచ్చ)', en:'South wall, SE end (uchcha)'},
+  'S-M': {r:'ok',   te:'దక్షిణ మధ్య', en:'South wall, middle'},
+  'S-SW':{r:'bad',  te:'దక్షిణ నైరుతి (నీచ)', en:'South wall, SW end (neecha)'},
+  'W-NW':{r:'best', te:'పడమర వాయువ్యం (ఉచ్చ)', en:'West wall, NW end (uchcha)'},
+  'W-M': {r:'ok',   te:'పడమర మధ్య', en:'West wall, middle'},
+  'W-SW':{r:'bad',  te:'పడమర నైరుతి (నీచ)', en:'West wall, SW end (neecha)'}
+};
+const DOOR_FOR = {E:['E-NE','E-M','E-SE'], N:['N-NE','N-M','N-NW'], S:['S-SE','S-M','S-SW'], W:['W-NW','W-M','W-SW'],
+  NE:['N-NE','E-NE'], SE:['S-SE','E-SE'], SW:['S-SW','W-SW'], NW:['W-NW','N-NW']};
+const DOOR_TEXT = {
+  best:['ఉచ్చ స్థానం: సింహద్వారానికి అత్యుత్తమ స్థానం. శుభం, అభివృద్ధి.','Uchcha position: the best place for a main door. Brings prosperity.'],
+  ok:['మధ్యమం: పరవాలేదు. ద్వారాన్ని వీలైనంత ఉచ్చ మూల వైపు జరపడం మంచిది.','Middle: acceptable. Shifting the door towards the uchcha end is better.'],
+  bad:['నీచ స్థానం: తెలుగు వాస్తులో ఈ ద్వారం మంచిది కాదు. అవకాశం ఉంటే ద్వారాన్ని ఉచ్చ మూల వైపు మార్చండి, లేదా నిపుణుడిని సంప్రదించండి.','Neecha position: considered unfavourable in Telugu Vastu. If possible, move the door towards the uchcha end, or consult an expert.']
+};
+
+/* Facing directions */
+const FACING = {
+  E:{r:'best', te:['సూర్యోదయ కిరణాలు నేరుగా ఇంట్లోకి వచ్చే తూర్పు ముఖ ఇల్లు అత్యంత శుభం. ఆరోగ్యం, కీర్తి.','An east-facing home gets the first sunlight. Considered most auspicious, good for health and name.'],
+     rules:[['సింహద్వారం తూర్పు గోడపై ఈశాన్యం వైపు భాగంలో (ఉచ్చ).','Main door on the NE part of the east wall (uchcha).'],['పడమర కంటే తూర్పులో ఎక్కువ ఖాళీ స్థలం వదలండి.','Leave more open space on the east than the west.'],['తూర్పు నేల పడమర కంటే తక్కువ ఎత్తులో.','East floor level lower than the west.'],['తూర్పు ఆగ్నేయంలో ద్వారం, వీధిపోటు వద్దు.','No door or road hit at the SE end of the east.']]},
+  N:{r:'best', te:['ఉత్తరం కుబేర స్థానం. ఉత్తర ముఖ ఇల్లు ధనాభివృద్ధికి చాలా మంచిది.','North is Kubera\'s direction. A north-facing home is very good for wealth.'],
+     rules:[['సింహద్వారం ఉత్తర గోడపై ఈశాన్యం వైపు భాగంలో (ఉచ్చ).','Main door on the NE part of the north wall (uchcha).'],['దక్షిణం కంటే ఉత్తరంలో ఎక్కువ ఖాళీ స్థలం.','More open space on the north than the south.'],['ఉత్తర నేల దక్షిణం కంటే పల్లం.','North floor level lower than the south.'],['ఉత్తర వాయువ్యంలో ద్వారం వద్దు.','No door at the NW end of the north wall.']]},
+  W:{r:'ok', te:['పడమర ముఖ ఇల్లు వరుణ స్థానం. నియమాలు పాటిస్తే మంచిది, వ్యాపారస్తులకు అనుకూలం.','West-facing homes belong to Varuna. Good when the rules are followed, often favoured by business people.'],
+     rules:[['సింహద్వారం పడమర గోడపై వాయువ్యం వైపు భాగంలో (ఉచ్చ).','Main door on the NW part of the west wall (uchcha).'],['రోడ్డు పడమర ఉన్నా, ఇంటికి తూర్పు, ఉత్తరాల్లో ఎక్కువ ఖాళీ వదలండి.','Even with the road on the west, leave more open space on the east and north.'],['పడమర నేల తూర్పు కంటే ఎత్తు.','West floor level higher than the east.'],['పడమర నైరుతిలో ద్వారం వద్దు.','No door at the SW end of the west wall.']]},
+  S:{r:'ok', te:['దక్షిణ ముఖ ఇల్లు అంటే చాలామంది భయపడతారు, కానీ సరైన నియమాలు పాటిస్తే ఇది కూడా మంచిదే.','Many people fear south-facing homes, but they do well when the rules are followed.'],
+     rules:[['సింహద్వారం దక్షిణ గోడపై ఆగ్నేయం వైపు భాగంలో (ఉచ్చ).','Main door on the SE part of the south wall (uchcha).'],['దక్షిణంలో తక్కువ ఖాళీ, ఉత్తరంలో ఎక్కువ ఖాళీ.','Less open space on the south, more on the north.'],['దక్షిణ కాంపౌండ్ గోడ ఎత్తుగా, మందంగా.','South compound wall taller and thicker.'],['దక్షిణంలో నీళ్లు, గుంటలు, దక్షిణ నైరుతి ద్వారం వద్దు.','No water, pits or door at the SW end of the south.']]},
+  NE:{r:'best', te:['ఈశాన్య ముఖ (విదిశ) ఇల్లు. విదిశల్లో ఇది అత్యంత శుభం.','North-east facing (a diagonal or vidisha plot). The best of the diagonal facings.'],
+     rules:[['ద్వారం ఉత్తర ఈశాన్యం లేదా తూర్పు ఈశాన్యంలో.','Door at the NE end of the north or east side.'],['ఈశాన్య మూల కోయబడకుండా, ఖాళీగా ఉండాలి.','The NE corner must stay full and open.'],['విదిశ స్థలాలకు ప్రత్యేక నియమాలు ఉంటాయి, నిపుణుడిని కూడా అడగండి.','Diagonal plots have special rules; also check with an expert.']]},
+  SE:{r:'ok', te:['ఆగ్నేయ ముఖ (విదిశ) ఇల్లు. జాగ్రత్తగా ప్లాన్ చేస్తే పరవాలేదు.','South-east facing (diagonal). Workable with careful planning.'],
+     rules:[['ద్వారం దక్షిణ ఆగ్నేయంలో (ఉచ్చ); తూర్పు ఆగ్నేయం వద్దు.','Door at the SE end of the south side (uchcha), not on the east side.'],['ఆగ్నేయం పెరగకుండా చూడండి.','Do not let the SE corner extend.'],['విదిశ స్థలాలకు నిపుణుడి సలహా తీసుకోండి.','Get expert advice for diagonal plots.']]},
+  NW:{r:'ok', te:['వాయువ్య ముఖ (విదిశ) ఇల్లు. నియమాలు పాటిస్తే పరవాలేదు.','North-west facing (diagonal). Acceptable with the right layout.'],
+     rules:[['ద్వారం పడమర వాయువ్యంలో (ఉచ్చ); ఉత్తర వాయువ్యం వద్దు.','Door at the NW end of the west side (uchcha), not on the north side.'],['వాయువ్యం పెరగకుండా చూడండి.','Do not let the NW corner extend.'],['విదిశ స్థలాలకు నిపుణుడి సలహా తీసుకోండి.','Get expert advice for diagonal plots.']]},
+  SW:{r:'bad', te:['నైరుతి ముఖ (విదిశ) ఇల్లు. తెలుగు వాస్తులో అత్యంత జాగ్రత్త కావాల్సిన ముఖం.','South-west facing (diagonal). Needs the most care in Telugu Vastu.'],
+     rules:[['నైరుతి మూలలో ద్వారం, ఖాళీ స్థలం వద్దు.','No door or open space at the SW corner.'],['నైరుతి భాగం ఎత్తుగా, బరువుగా ఉండాలి.','Keep the SW high and heavy.'],['కొనే ముందు అనుభవం ఉన్న వాస్తు నిపుణుడిని తప్పక సంప్రదించండి.','Consult an experienced Vastu expert before buying.']]}
+};
+
+/* Veedhi potu (road hitting the plot) */
+const VEEDHI = [
+ {id:'none', te:'వీధిపోటు లేదు', en:'No road hits the plot', r:'best'},
+ {id:'E-NE', te:'తూర్పు ఈశాన్యం', en:'East, NE end', r:'best'},
+ {id:'N-NE', te:'ఉత్తర ఈశాన్యం', en:'North, NE end', r:'best'},
+ {id:'S-SE', te:'దక్షిణ ఆగ్నేయం', en:'South, SE end', r:'ok'},
+ {id:'W-NW', te:'పడమర వాయువ్యం', en:'West, NW end', r:'ok'},
+ {id:'E-SE', te:'తూర్పు ఆగ్నేయం', en:'East, SE end', r:'bad'},
+ {id:'N-NW', te:'ఉత్తర వాయువ్యం', en:'North, NW end', r:'bad'},
+ {id:'S-SW', te:'దక్షిణ నైరుతి', en:'South, SW end', r:'bad'},
+ {id:'W-SW', te:'పడమర నైరుతి', en:'West, SW end', r:'bad'}
+];
+const VEEDHI_TEXT = {
+  best:['శుభ వీధిపోటు (లేదా పోటు లేదు). మంచిది.','A good road hit, or none at all.'],
+  ok:['పరవాలేదు. ఇతర నియమాలు సరిగా ఉంటే మంచి ఫలితాలు.','Acceptable when the rest of the layout is right.'],
+  bad:['అశుభ వీధిపోటు. ఆ వైపు ఎత్తైన కాంపౌండ్ గోడ కట్టి, పోటు నేరుగా ఇంటిని తాకకుండా అడ్డు పెట్టండి; నిపుణుడిని సంప్రదించండి.','An unfavourable road hit. Build a tall compound wall on that side so the road does not point straight at the house, and consult an expert.']
+};
+
+/* Yes / No questions. good = the answer that is right in Vastu */
+const QUESTIONS = [
+ {id:'shape', scope:'house', good:true, te:'స్థలం చతురస్రం లేదా దీర్ఘచతురస్రంగా ఉందా?', en:'Is the plot square or rectangular?', fix:['మూలలు సరిగా లేని స్థలాన్ని కాంపౌండ్ గోడతో చతురస్రంగా విభజించండి.','Use a compound wall to square off an irregular plot.']},
+ {id:'necut', scope:'both', good:false, te:'ఈశాన్య మూల కోయబడి / గుండ్రంగా / మూసుకుపోయి ఉందా?', en:'Is the NE corner cut, rounded or blocked?', fix:['ఈశాన్యం అత్యంత ముఖ్యమైన మూల. అక్కడి అడ్డంకులు తీసి, ఖాళీగా, వెలుతురుతో ఉంచండి.','The NE is the most important corner. Clear anything blocking it and keep it open and bright.']},
+ {id:'ext', scope:'house', good:false, te:'ఈశాన్యం కాకుండా వేరే ఏ మూలైనా బయటకు పెరిగిందా?', en:'Is any corner other than the NE extended outwards?', fix:['పెరిగిన మూలను కాంపౌండ్ గోడతో వేరు చేసి స్థలాన్ని సమం చేయండి.','Separate the extended part with a wall so the plot becomes regular.']},
+ {id:'space', scope:'house', good:true, te:'దక్షిణం, పడమర కంటే ఉత్తరం, తూర్పుల్లో ఎక్కువ ఖాళీ స్థలం ఉందా?', en:'Is there more open space on the north and east than the south and west?', fix:['కొత్త నిర్మాణాలు దక్షిణ, పడమర వైపు చేయండి; ఉత్తర, తూర్పు ఖాళీగా వదలండి.','Build any additions towards the south and west; keep the north and east open.']},
+ {id:'slope', scope:'both', good:true, te:'నేల వాలు ఈశాన్యం వైపు ఉందా (నైరుతి ఎత్తు, ఈశాన్యం పల్లం)?', en:'Does the floor slope towards the NE (SW highest, NE lowest)?', fix:['నైరుతి భాగం ఎత్తుగా ఉండేలా ఫ్లోరింగ్ సరిచేయండి; నీళ్లు ఈశాన్యం వైపు పారాలి.','Raise the SW floor level when you re-floor, so water flows towards the NE.']},
+ {id:'walls', scope:'house', good:true, te:'దక్షిణ, పడమర కాంపౌండ్ గోడలు ఉత్తర, తూర్పుల కంటే ఎత్తుగా, మందంగా ఉన్నాయా?', en:'Are the south and west compound walls taller and thicker than the north and east?', fix:['దక్షిణ, పడమర కాంపౌండ్ గోడల ఎత్తు పెంచండి.','Raise the south and west compound walls.']},
+ {id:'drain', scope:'house', good:true, te:'వర్షపు నీరు, డ్రైనేజీ ఈశాన్యం / ఉత్తరం / తూర్పు నుంచి బయటకు వెళ్తుందా?', en:'Does rain and drain water leave through the NE, north or east?', fix:['డ్రైనేజీ పైపులను ఉత్తరం లేదా తూర్పు వైపు మళ్లించండి.','Re-route drain outlets to the north or east.']},
+ {id:'centre', scope:'both', good:true, te:'ఇంటి మధ్య భాగం (బ్రహ్మస్థానం) స్తంభాలు, మరుగుదొడ్లు, మెట్లు లేకుండా ఖాళీగా ఉందా?', en:'Is the centre of the home free of pillars, toilets and stairs?', fix:['బ్రహ్మస్థానంలో బరువైన సామాను తీసివేసి, వెలుతురుతో ఖాళీగా ఉంచండి.','Clear heavy items from the centre and keep it bright and open.']},
+ {id:'bigtree', scope:'house', good:false, te:'ఈశాన్యం, ఉత్తరం, తూర్పుల్లో పెద్ద చెట్లు లేదా ఎత్తైన భవనాలు ఉన్నాయా?', en:'Are there big trees or tall buildings on the NE, north or east?', fix:['కొమ్మలు కత్తిరించి ఉదయం ఎండ ఇంట్లోకి వచ్చేలా చేయండి.','Prune branches so the morning sun reaches the house.']},
+ {id:'balconyne', scope:'apartment', good:true, te:'బాల్కనీ లేదా పెద్ద కిటికీలు ఉత్తరం / తూర్పు వైపు ఉన్నాయా?', en:'Are the balcony or large windows on the north or east?', fix:['ఉత్తర, తూర్పు కిటికీలు ఎక్కువ సేపు తెరిచి ఉంచండి; బరువైన కర్టెన్లు వద్దు.','Keep north and east windows open longer, with light curtains.']},
+ {id:'line', scope:'both', good:false, te:'సింహద్వారం, వెనక ద్వారం ఒకే వరుసలో ఎదురెదురుగా ఉన్నాయా?', en:'Are the front and back doors in one straight line?', fix:['మధ్యలో ఒక మొక్క లేదా పార్టిషన్ పెట్టి నేరుగా ఉన్న దారిని అడ్డుకోండి.','Place a plant or partition between them to break the straight line.']},
+ {id:'bigdoor', scope:'both', good:true, te:'సింహద్వారం ఇతర తలుపుల కంటే పెద్దదిగా, లోపలికి తెరుచుకునేలా ఉందా?', en:'Is the main door the largest door and does it open inwards?', fix:['సింహద్వారానికి రెండు రెక్కలు, గడప, తోరణం పెట్టి, లోపలికి సవ్యదిశలో తెరుచుకునేలా చేయండి.','Give the main door a threshold and thoranam, and make it open inwards, clockwise.']},
+ {id:'beam', scope:'both', good:false, te:'మంచం లేదా కూర్చునే చోటు పైన బీమ్ ఉందా?', en:'Is there a beam directly above a bed or a seat?', fix:['మంచాన్ని బీమ్ కింద నుంచి జరపండి, లేదా ఫాల్స్ సీలింగ్‌తో కప్పండి.','Move the bed out from under the beam, or cover it with a false ceiling.']},
+ {id:'mirror', scope:'both', good:false, te:'పడకగదిలో మంచానికి ఎదురుగా అద్దం ఉందా?', en:'Does a mirror face the bed?', fix:['అద్దాన్ని ఉత్తర లేదా తూర్పు గోడకు మార్చండి, రాత్రి కప్పి ఉంచండి.','Move mirrors to the north or east wall, or cover them at night.']},
+ {id:'head', scope:'both', good:true, te:'అందరూ తల దక్షిణం లేదా తూర్పు వైపు పెట్టి పడుకుంటారా?', en:'Does everyone sleep with their head to the south or east?', fix:['ఉత్తరం వైపు తల పెట్టి పడుకోవద్దు; మంచం దిశ మార్చండి.','Never sleep with the head to the north; turn the bed.']},
+ {id:'clutter', scope:'both', good:false, te:'ఈశాన్యంలో చెప్పులు, చెత్తబుట్ట, పాత సామాను ఉన్నాయా?', en:'Are footwear, a dustbin or junk kept in the NE?', fix:['ఈశాన్యాన్ని రోజూ శుభ్రంగా ఉంచండి; చెప్పులు, చెత్త నైరుతి లేదా వాయువ్యం వైపు.','Keep the NE clean every day; footwear and bins go to the SW or NW.']}
+];
+
+/* Tips for the guide */
+const TIPS = [
+ {te:'ఉచ్చ – నీచ ద్వారాలు', en:'Uchcha and neecha doors', items:[
+   ['ప్రతి గోడను మూడు భాగాలు చేయండి. ఈశాన్యం వైపు భాగం (తూర్పు, ఉత్తర గోడల్లో) ఉచ్చ.','Divide each wall into three. On the east and north walls the NE end is uchcha.'],
+   ['దక్షిణ గోడలో ఆగ్నేయం వైపు, పడమర గోడలో వాయువ్యం వైపు భాగం ఉచ్చ.','On the south wall the SE end is uchcha; on the west wall the NW end is uchcha.'],
+   ['తూర్పు ఆగ్నేయం, ఉత్తర వాయువ్యం, దక్షిణ నైరుతి, పడమర నైరుతి నీచ స్థానాలు; ఇక్కడ ద్వారాలు వద్దు.','East-SE, north-NW, south-SW and west-SW are neecha; avoid doors there.']]},
+ {te:'ఇల్లు / స్థలం కొనే ముందు', en:'Before buying a plot or house', items:[
+   ['చతురస్రం లేదా దీర్ఘచతురస్ర స్థలం ఉత్తమం. ముందు వెడల్పు, వెనక సన్నగా ఉండే స్థలం (సింహముఖి) వ్యాపారానికి, వెనక వెడల్పు (గోముఖి) ఇంటికి మంచిది.','Square or rectangular plots are best. Wider at the front (simhamukhi) suits business; wider at the back (gomukhi) suits homes.'],
+   ['తూర్పు, ఉత్తరాల్లో రోడ్డు ఉన్న స్థలం శుభం.','Plots with roads on the east or north are auspicious.'],
+   ['స్థలంలో వీధిపోటు ఎక్కడ ఉందో ముఖ దిశ పేజీలో చూడండి.','Check for any road hitting the plot on the Facing page.'],
+   ['స్థలం ఈశాన్యం వైపు పల్లంగా, నైరుతి వైపు ఎత్తుగా ఉండాలి.','The land should slope down towards the NE, with the SW highest.']]},
+ {te:'అపార్ట్‌మెంట్ కోసం', en:'For apartments', items:[
+   ['తెలుగు వాస్తులో ఫ్లాట్ సింహద్వారం దిశనే ముఖ దిశగా తీసుకుంటారు. బాల్కనీ దిశ రెండో ప్రాధాన్యం.','Telugu Vastu takes the flat\'s main door as its facing. The balcony direction comes second.'],
+   ['ఫ్లాట్ లోపల కూడా అష్ట దిక్కుల నియమాలు అలాగే వర్తిస్తాయి: వంటగది ఆగ్నేయం, యజమాని గది నైరుతి, పూజ ఈశాన్యం.','The same zone rules apply inside the flat: kitchen SE, master bedroom SW, pooja NE.'],
+   ['ఈశాన్యం, నైరుతి, మధ్య భాగాల్లో టాయిలెట్లు లేని ఫ్లాట్ ఎంచుకోండి.','Choose a flat with no toilets in the NE, SW or centre.'],
+   ['బిల్డింగ్ మొత్తం మార్చలేము కాబట్టి, మీ ఫ్లాట్ లోపలి అమరికపై దృష్టి పెట్టండి.','You cannot change the whole building, so focus on the layout inside your flat.']]},
+ {te:'నిద్ర, పడకగది', en:'Sleep and bedrooms', items:[
+   ['తల దక్షిణం వైపు పెట్టి పడుకోవడం ఉత్తమం, తూర్పు కూడా మంచిదే. ఉత్తరం వైపు తల వద్దు.','Head to the south is best, east is also good. Never to the north.'],
+   ['మంచం గోడకు ఆనుకొని ఉండాలి, బీమ్ కింద కాదు.','Keep the bed against a wall and not under a beam.'],
+   ['కొత్తగా పెళ్లైన దంపతులకు వాయువ్యం, ఇంటి పెద్దలకు నైరుతి.','North-west suits newly-weds; south-west suits the head of the family.']]},
+ {te:'వంటగది', en:'Kitchen', items:[
+   ['స్టవ్ ఆగ్నేయ మూలలో, వండేవారు తూర్పు వైపు చూస్తూ.','Stove in the SE corner, the cook facing east.'],
+   ['సింక్ ఈశాన్యం వైపు, స్టవ్‌కు సింక్‌కు మధ్య కొంత దూరం.','Sink towards the NE, with some distance from the stove.'],
+   ['ఫ్రిజ్ నైరుతి లేదా పడమర వైపు.','Fridge on the SW or west side.']]},
+ {te:'పూజ గది', en:'Pooja room', items:[
+   ['ఇంటి ఈశాన్యంలో, నేల మట్టానికి కొద్దిగా ఎత్తులో.','In the NE of the home, slightly above floor level.'],
+   ['మెట్ల కింద, పడకగదిలో, మరుగుదొడ్డి గోడను ఆనుకొని పూజ గది వద్దు.','Not under stairs, not in a bedroom, and not sharing a wall with a toilet.'],
+   ['విగ్రహాలు పెద్దవి కాకుండా, గోడకు కొద్దిగా దూరంగా.','Keep idols small and slightly away from the wall.']]},
+ {te:'దిక్సూచి సరిగా పని చేయాలంటే', en:'Getting an accurate reading', items:[
+   ['ఫోన్‌ను సమతలంగా (నేలకు సమాంతరంగా) పట్టుకోండి.','Hold the phone flat, parallel to the floor.'],
+   ['ముందు ఫోన్‌ను గాలిలో 8 ఆకారంలో 3–4 సార్లు తిప్పండి (క్యాలిబ్రేషన్).','First move the phone in a figure-8 three or four times to calibrate it.'],
+   ['ఇనుప గ్రిల్, బీరువా, ఫ్రిజ్, స్పీకర్లు, మాగ్నెటిక్ కవర్‌కు దూరంగా కొలవండి.','Measure away from steel grills, almirahs, fridges, speakers and magnetic phone covers.'],
+   ['ఇంటి లోపల, బయట మూడు చోట్ల కొలిచి సగటు తీసుకోండి.','Take readings in three places, inside and outside, and compare.']]}
+];
+
+</script>
+<script>
+/* ===== Vastu Dikshuchi app ===== */
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const RATE = {best:['ఉత్తమం','Best'], ok:['పరవాలేదు','Fine'], bad:['వద్దు','Avoid']};
+const PTS = {best:2, ok:1, bad:0};
+const KEY = 'vastu-dikshuchi-v1';
+const blank = () => ({type:'house', facing:null, facingDeg:null, door:null, veedhi:null, items:{}, answers:{}});
+let S = blank();
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.items) S = Object.assign(blank(), s); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
+
+const pill = r => `<span class="verdict v-${r}">${RATE[r][0]} <span class="en" style="color:inherit">${RATE[r][1]}</span></span>`;
+const bi = (pair, cls='') => `${pair[0]} <span class="en ${cls}">${pair[1]}</span>`;
+const zoneOf = h => ORDER8[Math.round(((h % 360) + 360) % 360 / 45) % 8];
+const norm = a => ((a % 360) + 360) % 360;
+const sdiff = (a, b) => ((a - b + 540) % 360) - 180;
+const MARK_YES = '<svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2c5 3 6 9 0 16C4 11 5 5 10 2z" fill="#8DB650"/><path d="M10 4v13" stroke="#2C3226" stroke-width="1.2"/></svg>';
+const MARK_NO = '<svg class="mark" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#BE3128"/><path d="M6.5 6.5l7 7M13.5 6.5l-7 7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>';
+
+/* ---------- dial ---------- */
+function buildDial(){
+  const P = [];
+  P.push('<circle r="199" fill="#252A20"/>');
+  P.push('<g id="dialRot">');
+  for (let a = 0; a < 360; a += 5) {
+    const big = a % 45 === 0, r = 187, x = r*Math.sin(a*Math.PI/180), y = -r*Math.cos(a*Math.PI/180);
+    P.push(`<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${big?3.4:1.5}" fill="${big?'#E9AE2C':'#EFECDF'}"/>`);
+    const len = a % 15 === 0 ? 12 : 6;
+    P.push(`<line x1="0" y1="-176" x2="0" y2="${-176+len}" stroke="${a%15===0?'#EFECDF':'#7E8470'}" stroke-width="${a%15===0?1.6:1}" transform="rotate(${a})"/>`);
+    if (a % 30 === 0) P.push(`<text transform="rotate(${a}) translate(0,-153)" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#B0B29E" font-family="Anek Telugu, sans-serif">${a}</text>`);
+  }
+  ORDER8.forEach((z, i) => {
+    const a0 = (i*45 - 22.5) * Math.PI/180, a1 = (i*45 + 22.5) * Math.PI/180, r0 = 102, r1 = 142;
+    const p = (r, a) => `${(r*Math.sin(a)).toFixed(2)},${(-r*Math.cos(a)).toFixed(2)}`;
+    P.push(`<path class="sec" data-z="${z}" d="M${p(r0,a0)} L${p(r1,a0)} A${r1},${r1} 0 0 1 ${p(r1,a1)} L${p(r0,a1)} A${r0},${r0} 0 0 0 ${p(r0,a0)}Z" fill="#363D2E" stroke="#252A20" stroke-width="3"/>`);
+    P.push(`<text class="secT" data-z="${z}" transform="rotate(${i*45}) translate(0,-122)" text-anchor="middle" dominant-baseline="central" font-size="${z.length>1?15:17}" fill="#EFECDF" font-family="Ramabhadra, 'Noto Sans Telugu', sans-serif">${ZONES[z].te}</text>`);
+  });
+  // muggu lotus
+  const petal = 'M0,-17 C21,-38 17,-76 0,-90 C-17,-76 -21,-38 0,-17Z';
+  const petal2 = 'M0,-10 C13,-25 12,-48 0,-58 C-12,-48 -13,-25 0,-10Z';
+  for (let i = 0; i < 8; i++) {
+    const north = i === 0;
+    P.push(`<path d="${petal}" transform="rotate(${i*45})" fill="${north?'#BE3128':'none'}" stroke="#EFECDF" stroke-width="2.2" stroke-linejoin="round"/>`);
+    P.push(`<path d="${petal2}" transform="rotate(${i*45+22.5})" fill="none" stroke="#EFECDF" stroke-width="1.8" opacity=".85"/>`);
+    P.push(`<circle cx="0" cy="-70" r="2.2" fill="#EFECDF" transform="rotate(${i*45+22.5})"/>`);
+    P.push(`<circle cx="0" cy="-36" r="1.8" fill="#EFECDF" transform="rotate(${i*45})"/>`);
+  }
+  P.push('<circle r="13" fill="none" stroke="#EFECDF" stroke-width="2"/><circle r="4.5" fill="#E9AE2C"/>');
+  P.push('</g>');
+  // fixed pointer
+  P.push('<path d="M-11,-200 L11,-200 L0,-180Z" fill="#E9AE2C"/>');
+  $('#dial').innerHTML = P.join('');
+}
+
+/* ---------- compass sensor ---------- */
+let heading = 0, shown = 0, cont = 0, sx = 1, sy = 0, running = false, hold = false, gotEvent = false, tilt = false, lastZone = null, wake = null;
+function setMsg(html, warn){ const m = $('#sensorMsg'); m.innerHTML = html; m.classList.toggle('warn', !!warn); }
+
+function onOrient(e){
+  let h = null;
+  if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) h = e.webkitCompassHeading;
+  else if ((e.absolute || e.type === 'deviceorientationabsolute') && e.alpha != null) h = 360 - e.alpha;
+  if (h == null) return;
+  const sa = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+  h = norm(h + sa);
+  if (!gotEvent) { gotEvent = true; setMsg('ఫోన్‌ను సమతలంగా పట్టుకోండి. సరిగా రాకపోతే గాలిలో 8 ఆకారంలో తిప్పండి. <span class="en">Hold flat. If it seems off, wave the phone in a figure-8.</span>'); }
+  const rad = h * Math.PI/180;
+  sx = sx*0.82 + Math.cos(rad)*0.18; sy = sy*0.82 + Math.sin(rad)*0.18;
+  heading = norm(Math.atan2(sy, sx) * 180/Math.PI);
+  const t = e.beta != null && (Math.abs(e.beta) > 40 || Math.abs(e.gamma) > 40);
+  if (t !== tilt) { tilt = t; if (t) setMsg('ఫోన్‌ను నేలకు సమాంతరంగా పట్టుకోండి. <span class="en">Hold the phone flat for an accurate reading.</span>', true); else setMsg('సరిగా ఉంది. <span class="en">Good, reading is steady.</span>'); }
+  if (!hold) requestDraw();
+}
+async function startCompass(){
+  if (running) return true;
+  if (!window.isSecureContext) { setMsg('దిక్సూచి సెన్సార్ కోసం యాప్‌ను HTTPS లింక్ ద్వారా తెరవాలి. <span class="en">Open the app from an https:// link to use the sensor.</span>', true); return false; }
+  try {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const p = await DeviceOrientationEvent.requestPermission();
+      if (p !== 'granted') { setMsg('సెన్సార్ అనుమతి ఇవ్వలేదు. <span class="en">Sensor permission was not granted.</span>', true); return false; }
+    }
+  } catch(e) {}
+  if ('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', onOrient);
+  else window.addEventListener('deviceorientation', onOrient);
+  running = true;
+  $('#btnStart').innerHTML = 'దిక్సూచి నడుస్తోంది <span class="en">Running</span>';
+  $('#btnStart').disabled = true;
+  setMsg('సెన్సార్ కోసం చూస్తోంది… <span class="en">Waiting for the sensor…</span>');
+  try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch(e){}
+  setTimeout(() => {
+    if (!gotEvent) {
+      running = false;
+      $('#btnStart').disabled = false;
+      $('#btnStart').innerHTML = 'మళ్ళీ ప్రయత్నించు <span class="en">Try again</span>';
+      setMsg('ఈ పరికరంలో దిక్సూచి సెన్సార్ దొరకలేదు. డయల్‌ను వేలితో తిప్పి నియమాలు చూడవచ్చు. <span class="en">No compass sensor found. You can turn the dial with your finger instead.</span>', true);
+    }
+    updateLiveBits();
+  }, 2500);
+  return true;
+}
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && running && navigator.wakeLock) { try { wake = await navigator.wakeLock.request('screen'); } catch(e){} }
+});
+
+/* manual drag of the dial when no sensor */
+(function(){
+  const w = $('#dialWrap'); let dragging = false, lastA = 0;
+  const ang = ev => { const r = w.getBoundingClientRect(); return Math.atan2(ev.clientX - (r.left + r.width/2), -(ev.clientY - (r.top + r.height/2))) * 180/Math.PI; };
+  w.addEventListener('pointerdown', ev => { if (gotEvent) return; dragging = true; lastA = ang(ev); w.setPointerCapture(ev.pointerId); });
+  w.addEventListener('pointermove', ev => { if (!dragging) return; const a = ang(ev); heading = norm(heading - sdiff(a, lastA)); lastA = a; requestDraw(); });
+  const end = () => { dragging = false; };
+  w.addEventListener('pointerup', end); w.addEventListener('pointercancel', end);
+  w.tabIndex = 0;
+  w.addEventListener('keydown', ev => { if (gotEvent) return; if (ev.key === 'ArrowLeft') { heading = norm(heading - 5); requestDraw(); } if (ev.key === 'ArrowRight') { heading = norm(heading + 5); requestDraw(); } });
+})();
+
+let drawQueued = false;
+function requestDraw(){ if (!drawQueued) { drawQueued = true; requestAnimationFrame(draw); } }
+function draw(){
+  drawQueued = false;
+  shown = heading;
+  cont += sdiff(shown, norm(cont));
+  const rot = $('#dialRot'); if (rot) rot.setAttribute('transform', `rotate(${(-cont).toFixed(2)})`);
+  const z = zoneOf(shown), Z = ZONES[z];
+  $('#dirTe').textContent = Z.te;
+  $('#dirEn').textContent = Z.en;
+  $('#deg').textContent = Math.round(shown) + '°';
+  $('#vidTag').innerHTML = z.length === 2 ? '<span class="vidisha-tag">విదిశ <span class="en">diagonal</span></span>' : '';
+  if (z !== lastZone) {
+    lastZone = z;
+    $$('.sec').forEach(p => p.setAttribute('fill', p.dataset.z === z ? '#E9AE2C' : '#363D2E'));
+    $$('.secT').forEach(t => t.setAttribute('fill', t.dataset.z === z ? '#1F241A' : '#EFECDF'));
+    renderHere(z);
+  }
+  updateLiveBits();
+}
+function updateLiveBits(){
+  const z = zoneOf(shown);
+  const n = $('#miniNeedle'); if (n) n.setAttribute('transform', `rotate(${(-shown).toFixed(1)})`);
+  const live = running && gotEvent;
+  $('#miniDir').textContent = live ? ZONES[z].te + ' ముఖం' : '—';
+  $('#miniDeg').textContent = live ? `${ZONES[z].en}, ${Math.round(shown)}°` : 'దిక్సూచి ఇంకా మొదలవలేదు (Compass not started)';
+  const sl = $('#sheetLive');
+  if (sl) {
+    sl.innerHTML = live ? `${ZONES[z].te} <span class="en">${ZONES[z].en}, ${Math.round(shown)}°</span>` : 'దిక్సూచి ఆగి ఉంది <span class="en">Compass is off</span>';
+    const b = $('#useLive'); if (b) { b.disabled = !live; b.dataset.z = z; }
+  }
+}
+
+/* ---------- compass "here" panel ---------- */
+function ddLists(Z, limit){
+  const y = limit ? Z.yes.slice(0, limit) : Z.yes, n = limit ? Z.no.slice(0, limit) : Z.no;
+  return `<div class="dd">
+    <div class="yes"><h3>ఉండాల్సినవి <span class="en" style="color:inherit">Should be here</span></h3><ul>${y.map(p => `<li>${MARK_YES}<span>${p[0]}<span class="en">${p[1]}</span></span></li>`).join('')}</ul></div>
+    <div class="no"><h3>ఉండకూడనివి <span class="en" style="color:inherit">Should not be here</span></h3><ul>${n.map(p => `<li>${MARK_NO}<span>${p[0]}<span class="en">${p[1]}</span></span></li>`).join('')}</ul></div>
+  </div>`;
+}
+function metaLine(Z){
+  return `<p class="meta">అధిపతి <span>${Z.deity[0]}</span> (${Z.deity[1]}), గ్రహం <span>${Z.planet[0]}</span> (${Z.planet[1]})${Z.elem ? `, తత్వం <span>${Z.elem[0]}</span> (${Z.elem[1]})` : ''}</p>
+          <p class="meta">${Z.gov[0]} <span class="en">${Z.gov[1]}</span></p>`;
+}
+function renderHere(z){
+  const Z = ZONES[z];
+  $('#here').innerHTML = `<div class="gadapa" aria-hidden="true"></div>
+    <div class="here-head"><h2>${Z.te} దిశలో <span class="en">In the ${Z.en}</span></h2></div>
+    ${metaLine(Z)}
+    ${ddLists(Z, 5)}
+    <div class="btn-row" style="justify-content:flex-start;margin-top:16px"><button class="btn ghost small" data-goguide="${z}">పూర్తి నియమాలు చూడండి <span class="en">See all rules</span></button></div>`;
+}
+
+/* ---------- tabs ---------- */
+function showView(id){
+  $$('.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.view === id ? 'true' : 'false'));
+  $$('.view').forEach(v => v.classList.toggle('on', v.id === id));
+  window.scrollTo(0, 0);
+  if (id === 'v-check') renderCheck();
+}
+$$('.tabs button').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+document.addEventListener('click', ev => {
+  const g = ev.target.closest('[data-goguide]');
+  if (g) { selZone = g.dataset.goguide; renderGuide(); showView('v-guide'); }
+});
+
+/* ---------- home type ---------- */
+function setType(t){
+  S.type = t;
+  if (t === 'apartment') S.veedhi = null;
+  save();
+  $$('[data-typeseg] button').forEach(b => b.setAttribute('aria-pressed', b.dataset.type === t ? 'true' : 'false'));
+  renderFacing(); renderCheck();
+}
+$$('[data-typeseg] button').forEach(b => b.addEventListener('click', () => setType(b.dataset.type)));
+
+/* ---------- facing ---------- */
+function renderFacing(){
+  const flat = S.type === 'apartment';
+  $('#facingHow').innerHTML = flat
+    ? 'ఫ్లాట్ లోపల మీ సింహద్వారం దగ్గర నిలబడి, కారిడార్ వైపు బయటకు చూడండి. ఫోన్‌ను సమతలంగా పట్టుకొని పైభాగం బయటకు చూపండి. <span class="en">Stand inside your flat at the main door and look out towards the corridor. Hold the phone flat with its top pointing out.</span>'
+    : 'ఇంటి లోపల సింహద్వారం గడప దగ్గర నిలబడి, బయట రోడ్డు వైపు చూడండి. ఫోన్‌ను సమతలంగా పట్టుకొని పైభాగం బయటకు చూపండి. <span class="en">Stand inside the house at the main door and look out towards the road. Hold the phone flat with its top pointing out.</span>';
+  $('#facingChips').innerHTML = ORDER8.map(z => `<button class="chip" data-face="${z}" aria-pressed="${S.facing === z && S.facingDeg === ZONES[z].deg}">${ZONES[z].te} <span class="en">${ZONES[z].en}</span></button>`).join('');
+
+  const fr = $('#facingResult'), ds = $('#doorStep'), vs = $('#veedhiStep');
+  if (!S.facing) { fr.hidden = ds.hidden = vs.hidden = true; return; }
+  const F = FACING[S.facing], Z = ZONES[S.facing];
+  let devNote = '';
+  if (S.facingDeg != null && Z.deg != null) {
+    const d = sdiff(S.facingDeg, Z.deg);
+    if (S.facing.length === 1 && Math.abs(d) > 12) {
+      const towards = ZONES[ORDER8[(ORDER8.indexOf(S.facing) + (d > 0 ? 1 : 7)) % 8]];
+      devNote = `<p class="note">కొలిచిన కోణం <b>${Math.round(S.facingDeg)}°</b>. మీ ఇల్లు ${Z.te} నుంచి ${towards.te} వైపు ${Math.abs(Math.round(d))}° వాలి ఉంది. 15° కంటే ఎక్కువ వాలు ఉంటే విదిశ నియమాలు కూడా చూడాలి. <span class="en">Measured ${Math.round(S.facingDeg)}°: tilted ${Math.abs(Math.round(d))}° from ${Z.en} towards ${towards.en}. Past 15°, diagonal (vidisha) rules start to apply.</span></p>`;
+    } else devNote = `<p class="note">కొలిచిన కోణం <b>${Math.round(S.facingDeg)}°</b> <span class="en">Measured angle</span></p>`;
+  }
+  fr.hidden = false;
+  fr.innerHTML = `<h3>3. ఫలితం <span class="en">Result</span></h3>
+    <div class="result"><div class="big">${Z.te} ముఖ ${flat ? 'ఫ్లాట్' : 'ఇల్లు'}</div>
+    <p style="margin:4px 0 8px">${Z.en}-facing ${flat ? 'flat' : 'house'} ${pill(F.r)}</p>
+    <p>${bi(F.te)}</p>
+    <ul>${F.rules.map(r => `<li>${r[0]} <span class="en">${r[1]}</span></li>`).join('')}</ul>${devNote}</div>`;
+
+  // door
+  const opts = DOOR_FOR[S.facing];
+  const pos = {'E-NE':[100,-66],'E-M':[100,0],'E-SE':[100,66],'N-NE':[66,-100],'N-M':[0,-100],'N-NW':[-66,-100],'S-SE':[66,100],'S-M':[0,100],'S-SW':[-66,100],'W-NW':[-100,-66],'W-M':[-100,0],'W-SW':[-100,66]};
+  const col = {best:'#8DB650', ok:'#E9AE2C', bad:'#BE3128'};
+  const svg = `<svg viewBox="-150 -150 300 300" role="img" aria-label="ఇంటి ప్లాన్ / house plan, north at top">
+      <rect x="-100" y="-100" width="200" height="200" fill="#363D2E" stroke="#EFECDF" stroke-width="2"/>
+      <path d="M-100,-33H100M-100,33H100M-33,-100V100M33,-100V100" stroke="#4C5442" stroke-dasharray="3 5"/>
+      <text x="0" y="-122" text-anchor="middle" fill="#E9AE2C" font-size="16" font-family="Ramabhadra,sans-serif">ఉత్తరం</text>
+      <text x="0" y="137" text-anchor="middle" fill="#B0B29E" font-size="14" font-family="Ramabhadra,sans-serif">దక్షిణం</text>
+      <text x="124" y="0" text-anchor="middle" fill="#B0B29E" font-size="14" font-family="Ramabhadra,sans-serif" transform="rotate(90 124 0)">తూర్పు</text>
+      <text x="-124" y="0" text-anchor="middle" fill="#B0B29E" font-size="14" font-family="Ramabhadra,sans-serif" transform="rotate(-90 -124 0)">పడమర</text>
+      <text x="52" y="-56" text-anchor="middle" dominant-baseline="central" fill="#B0B29E" font-size="12">ఈశాన్యం</text>
+      <text x="52" y="56" text-anchor="middle" dominant-baseline="central" fill="#B0B29E" font-size="12">ఆగ్నేయం</text>
+      <text x="-52" y="56" text-anchor="middle" dominant-baseline="central" fill="#B0B29E" font-size="12">నైరుతి</text>
+      <text x="-52" y="-56" text-anchor="middle" dominant-baseline="central" fill="#B0B29E" font-size="12">వాయువ్యం</text>
+      ${opts.map(k => { const [x,y] = pos[k], sel = S.door === k; return `<g class="seg-btn" data-door="${k}"><circle cx="${x}" cy="${y}" r="${sel?15:11}" fill="${col[DOOR[k].r]}" stroke="${sel?'#EFECDF':'#252A20'}" stroke-width="${sel?4:2}"/></g>`; }).join('')}
+    </svg>`;
+  ds.hidden = false;
+  ds.innerHTML = `<h3>4. సింహద్వారం ఎక్కడ ఉంది? <span class="en">Where is the main door on that side?</span></h3>
+    <p class="en">Each wall is split into three parts. Tap the part where your main door sits.</p>
+    <div class="plan">${svg}<div class="door-opts">${opts.map(k => `<button class="door-opt" data-door="${k}" aria-pressed="${S.door === k}"><span>${DOOR[k].te}<span class="en" style="display:block">${DOOR[k].en}</span></span>${pill(DOOR[k].r)}</button>`).join('')}</div></div>
+    ${S.door ? `<p class="note" style="margin-top:12px">${bi(DOOR_TEXT[DOOR[S.door].r])}</p>` : ''}`;
+
+  // veedhi potu
+  if (flat) { vs.hidden = true; return; }
+  vs.hidden = false;
+  const V = VEEDHI.find(v => v.id === S.veedhi);
+  vs.innerHTML = `<h3>5. వీధిపోటు <span class="en">Does a road point straight at your plot?</span></h3>
+    <p class="en">A road that ends at or runs straight into your plot is called veedhi potu.</p>
+    <div class="chips">${VEEDHI.map(v => `<button class="chip" data-veedhi="${v.id}" aria-pressed="${S.veedhi === v.id}">${v.te} <span class="en">${v.en}</span></button>`).join('')}</div>
+    ${V ? `<p style="margin-top:12px">${pill(V.r)}</p><p class="note">${bi(VEEDHI_TEXT[V.r])}</p>` : ''}`;
+}
+$('#v-facing').addEventListener('click', ev => {
+  const f = ev.target.closest('[data-face]');
+  if (f) { S.facing = f.dataset.face; S.facingDeg = ZONES[S.facing].deg; if (S.door && !DOOR_FOR[S.facing].includes(S.door)) S.door = null; save(); renderFacing(); $('#facingResult').scrollIntoView({behavior:'smooth', block:'start'}); return; }
+  const d = ev.target.closest('[data-door]');
+  if (d) { S.door = d.dataset.door; save(); renderFacing(); return; }
+  const v = ev.target.closest('[data-veedhi]');
+  if (v) { S.veedhi = v.dataset.veedhi; save(); renderFacing(); }
+});
+$('#btnRecord').addEventListener('click', async () => {
+  if (!(running && gotEvent)) {
+    await startCompass();
+    if (!gotEvent) { $('#miniDeg').textContent = 'సెన్సార్ సిద్ధమైన తర్వాత మళ్ళీ నొక్కండి (Tap again once the reading appears)'; return; }
+  }
+  S.facing = zoneOf(shown); S.facingDeg = Math.round(shown);
+  if (S.door && !DOOR_FOR[S.facing].includes(S.door)) S.door = null;
+  save(); renderFacing();
+  $('#facingResult').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ---------- checker ---------- */
+const rateItem = (it, z) => it.best.includes(z) ? 'best' : it.ok.includes(z) ? 'ok' : 'bad';
+const scoped = arr => arr.filter(x => x.scope === 'both' || x.scope === S.type);
+const zoneName = z => z === 'C' ? 'మధ్య (బ్రహ్మస్థానం)' : ZONES[z].te;
+
+function collect(){
+  const out = []; // {w, r, title:[te,en], fix:[te,en]}
+  if (S.facing) out.push({w:2, r:FACING[S.facing].r, title:[`ఇల్లు ${ZONES[S.facing].te} ముఖం`, `${ZONES[S.facing].en}-facing`], fix:FACING[S.facing].rules[0]});
+  if (S.door) out.push({w:3, r:DOOR[S.door].r, title:[`సింహద్వారం: ${DOOR[S.door].te}`, `Main door: ${DOOR[S.door].en}`], fix:DOOR_TEXT[DOOR[S.door].r]});
+  if (S.type === 'house' && S.veedhi) { const V = VEEDHI.find(v => v.id === S.veedhi); out.push({w:2, r:V.r, title:[`వీధిపోటు: ${V.te}`, `Road hit: ${V.en}`], fix:VEEDHI_TEXT[V.r]}); }
+  scoped(ITEMS).forEach(it => {
+    const z = S.items[it.id]; if (!z || z === 'none') return;
+    const r = rateItem(it, z);
+    out.push({w:it.w, r, title:[`${it.te} ${zoneName(z)}లో ఉంది`, `${it.en} is in the ${ZONES[z].en}`], fix: r === 'best' ? it.tip : it.fix, tip:it.tip});
+  });
+  scoped(QUESTIONS).forEach(q => {
+    const a = S.answers[q.id]; if (a == null) return;
+    out.push({w:1, r: a === q.good ? 'best' : 'bad', title:[q.te, q.en], fix:q.fix});
+  });
+  return out;
+}
+function renderCheck(){
+  $$('[data-typeseg] button').forEach(b => b.setAttribute('aria-pressed', b.dataset.type === S.type ? 'true' : 'false'));
+  const all = collect();
+  const tot = all.reduce((s, x) => s + x.w*2, 0), got = all.reduce((s, x) => s + x.w*PTS[x.r], 0);
+  const sc = tot ? Math.round(100*got/tot) : null;
+  const bad = all.filter(x => x.r === 'bad').length;
+  const label = sc == null ? ['ఇంకా ఏమీ నమోదు చేయలేదు','Nothing marked yet'] : sc >= 80 ? ['చాలా బాగుంది','Very good'] : sc >= 60 ? ['బాగుంది','Good'] : sc >= 40 ? ['కొన్ని మార్పులు అవసరం','Some changes needed'] : ['చాలా మార్పులు అవసరం','Many changes needed'];
+  const filled = sc == null ? 0 : Math.round(sc/5);
+  $('#score').innerHTML = `<div class="score-num">${sc == null ? '—' : sc}<small>/100</small></div>
+    <div><b style="font-size:18px">${label[0]}</b> <span class="en">${label[1]}</span>
+    <div class="dots" aria-hidden="true">${Array.from({length:20}, (_, i) => `<i class="${i < filled ? 'f' : ''}"></i>`).join('')}</div>
+    <p class="score-text"><b>${all.length}</b> అంశాలు చూశారు, <b>${bad}</b> సరిచేయాలి <span class="en">${all.length} checked, ${bad} to fix</span></p></div>`;
+
+  const dr = S.door ? DOOR[S.door] : null;
+  $('#doorRow').innerHTML = `<li><button class="row" id="goDoor"><span class="nm">సింహద్వారం, ముఖ దిశ<span class="en">Main door and facing</span></span>
+    <span class="rt">${dr ? pill(dr.r) + `<span class="zone">${dr.te}</span>` : `<span class="verdict v-none">ఎంచుకోండి <span class="en">Set</span></span>`}</span></button></li>`;
+  $('#itemRows').innerHTML = scoped(ITEMS).map(it => {
+    const z = S.items[it.id];
+    const right = !z ? '<span class="verdict v-none">ఎంచుకోండి <span class="en">Set</span></span>' : z === 'none' ? '<span class="zone">లేదు <span class="en">Not present</span></span>' : `${pill(rateItem(it, z))}<span class="zone">${zoneName(z)}</span>`;
+    return `<li><button class="row" data-item="${it.id}"><span class="nm">${it.te}<span class="en">${it.en}</span></span><span class="rt">${right}</span></button></li>`;
+  }).join('');
+  $('#questions').innerHTML = scoped(QUESTIONS).map(q => {
+    const a = S.answers[q.id];
+    const cls = v => v === q.good ? 'good' : 'badc';
+    return `<div class="q"><p>${q.te}<span class="en" style="display:block">${q.en}</span></p>
+      <div class="yn" role="group" aria-label="${q.en}"><button class="${cls(true)}" data-q="${q.id}" data-a="1" aria-pressed="${a === true}">అవును<span class="sr"> Yes</span></button><button class="${cls(false)}" data-q="${q.id}" data-a="0" aria-pressed="${a === false}">కాదు<span class="sr"> No</span></button></div></div>`;
+  }).join('');
+
+  const issues = all.filter(x => x.r === 'bad').concat(all.filter(x => x.r === 'ok' && x.w >= 2));
+  $('#issues').innerHTML = issues.length ? issues.map(x => `<li class="${x.r === 'ok' ? 'okish' : ''}"><h4>${x.title[0]} <span class="en">${x.title[1]}</span></h4><p>${x.fix[0]}</p><p class="en">${x.fix[1]}</p></li>`).join('')
+    : `<li style="border:0;background:none;padding-left:0" class="empty">${all.length ? 'ప్రస్తుతానికి సరిచేయాల్సినవి ఏమీ లేవు. <span class="en">Nothing to fix so far.</span>' : 'పైన గదుల దిశలు, ప్రశ్నలకు సమాధానాలు నమోదు చేయండి. <span class="en">Mark the rooms and answer the questions above to see what to fix.</span>'}</li>`;
+}
+$('#v-check').addEventListener('click', ev => {
+  if (ev.target.closest('#goDoor')) { showView('v-facing'); const t = S.facing ? $('#doorStep') : $('#v-facing'); setTimeout(() => t.scrollIntoView({block:'start'}), 30); return; }
+  const it = ev.target.closest('[data-item]'); if (it) { openSheet(it.dataset.item); return; }
+  const q = ev.target.closest('[data-q]');
+  if (q) { const v = q.dataset.a === '1'; S.answers[q.dataset.q] = S.answers[q.dataset.q] === v ? undefined : v; if (S.answers[q.dataset.q] === undefined) delete S.answers[q.dataset.q]; save(); renderCheck(); }
+});
+$('#btnReset').addEventListener('click', () => {
+  if (!confirm('నమోదు చేసినవన్నీ తొలగించాలా? / Clear everything you have marked?')) return;
+  const t = S.type; S = blank(); S.type = t; save(); renderFacing(); renderCheck();
+});
+$('#btnShare').addEventListener('click', async () => {
+  const all = collect();
+  const tot = all.reduce((s, x) => s + x.w*2, 0), got = all.reduce((s, x) => s + x.w*PTS[x.r], 0);
+  const lines = [`వాస్తు దిక్సూచి నివేదిక / Vastu report (${S.type === 'house' ? 'ఇల్లు / House' : 'ఫ్లాట్ / Flat'})`];
+  if (tot) lines.push(`స్కోరు / Score: ${Math.round(100*got/tot)}/100`);
+  all.forEach(x => lines.push(`${x.r === 'best' ? '✓' : x.r === 'ok' ? '•' : '✗'} ${x.title[0]} (${x.title[1]}) – ${RATE[x.r][0]}${x.r !== 'best' ? `\n   ${x.fix[0]}` : ''}`));
+  const text = lines.join('\n');
+  const b = $('#btnShare');
+  try {
+    if (navigator.share) await navigator.share({title:'Vastu report', text});
+    else { await navigator.clipboard.writeText(text); b.innerHTML = 'కాపీ అయింది <span class="en">Copied</span>'; setTimeout(() => b.innerHTML = 'నివేదిక పంపు <span class="en">Share report</span>', 2000); }
+  } catch(e) {}
+});
+
+/* ---------- bottom sheet ---------- */
+let sheetItem = null, lastFocus = null;
+function openSheet(id){
+  sheetItem = ITEMS.find(i => i.id === id); lastFocus = document.activeElement;
+  renderSheet();
+  $('#scrim').classList.add('on'); $('#sheet').classList.add('on');
+  setTimeout(() => { const x = $('#sheet .x'); if (x) x.focus(); }, 50);
+}
+function closeSheet(){
+  $('#scrim').classList.remove('on'); $('#sheet').classList.remove('on');
+  sheetItem = null; renderCheck();
+  if (lastFocus) lastFocus.focus();
+}
+function renderSheet(){
+  const it = sheetItem, cur = S.items[it.id];
+  const r = cur && cur !== 'none' ? rateItem(it, cur) : null;
+  $('#sheetIn').innerHTML = `<div class="grab" aria-hidden="true"></div>
+    <div class="sheet-head"><div><h2 id="sheetTitle">${it.te}</h2><span class="en">${it.en}</span></div><button class="x" aria-label="మూసివేయి / Close">×</button></div>
+    <p style="margin-top:12px">మీ ఇంట్లో ఇది ఏ దిశలో ఉంది? <span class="en">Which zone of the home is it in?</span></p>
+    <div class="live-mini" style="flex-wrap:wrap">
+      <div style="flex:1;min-width:160px"><span class="en" style="display:block">ఇంటి మధ్యలో నిలబడి ఫోన్‌ను దాని వైపు చూపండి. Stand at the centre and point the phone at it.</span><b id="sheetLive"></b></div>
+      <button class="btn small" id="useLive">ఈ దిశ వాడు <span class="en">Use</span></button>
+    </div>
+    <p class="note" style="margin-top:0">లేదా కింద ఎంచుకోండి (ఉత్తరం పైన) <span class="en">or pick below, north at top</span></p>
+    <div class="pick-grid">${GRID9.map(z => { const rr = rateItem(it, z); return `<button data-pick="${z}" aria-pressed="${cur === z}"><b>${z === 'C' ? 'మధ్య' : ZONES[z].te}</b><span class="en">${z === 'C' ? 'Centre' : ZONES[z].en}</span><span class="v v-${rr}">${RATE[rr][0]}</span></button>`; }).join('')}</div>
+    <button class="btn ghost small" data-pick="none" aria-pressed="${cur === 'none'}">మా ఇంట్లో ఇది లేదు <span class="en">Not in my home</span></button>
+    ${r ? `<div class="verdict-box">${pill(r)} <b style="margin-left:6px">${zoneName(cur)}</b><p>${r === 'best' ? '' : it.fix[0] + '<span class="en" style="display:block">' + it.fix[1] + '</span>'}</p><p>${it.tip[0]}<span class="en" style="display:block">${it.tip[1]}</span></p></div>`
+         : `<div class="verdict-box"><p style="margin:0">${it.tip[0]}<span class="en" style="display:block">${it.tip[1]}</span></p><p class="note">ఉత్తమ దిశ: <b>${it.best.map(zoneName).join(', ')}</b> <span class="en">Best: ${it.best.map(z => ZONES[z].en).join(', ')}</span></p></div>`}
+    <div class="btn-row" style="justify-content:flex-start;margin-top:16px"><button class="btn" id="sheetDone">పూర్తయింది <span class="en">Done</span></button></div>`;
+  updateLiveBits();
+  if (!(running && gotEvent)) {
+    const b = $('#useLive'); b.disabled = false; b.innerHTML = 'దిక్సూచి ప్రారంభించు <span class="en">Start</span>'; b.dataset.start = '1';
+  }
+}
+$('#sheet').addEventListener('click', async ev => {
+  if (ev.target.closest('.x') || ev.target.closest('#sheetDone')) { closeSheet(); return; }
+  const u = ev.target.closest('#useLive');
+  if (u) {
+    if (u.dataset.start) { await startCompass(); setTimeout(renderSheet, 2600); return; }
+    S.items[sheetItem.id] = u.dataset.z || zoneOf(shown); save(); renderSheet(); return;
+  }
+  const p = ev.target.closest('[data-pick]');
+  if (p) { S.items[sheetItem.id] = p.dataset.pick; save(); renderSheet(); }
+});
+$('#scrim').addEventListener('click', closeSheet);
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && sheetItem) closeSheet(); });
+
+/* ---------- guide ---------- */
+let selZone = 'NE';
+function renderGuide(){
+  $('#grid9').innerHTML = GRID9.map(z => `<button data-zone="${z}" aria-pressed="${selZone === z}"><b>${z === 'C' ? 'బ్రహ్మస్థానం' : ZONES[z].te}</b><span class="en">${z === 'C' ? 'Centre' : ZONES[z].en}</span></button>`).join('');
+  const Z = ZONES[selZone];
+  $('#zoneDetail').innerHTML = `<div class="here-head" style="margin-top:16px"><h2>${Z.te} <span class="en">${Z.en}</span></h2></div>${metaLine(Z)}${ddLists(Z)}`;
+}
+$('#grid9').addEventListener('click', ev => { const b = ev.target.closest('[data-zone]'); if (b) { selZone = b.dataset.zone; renderGuide(); } });
+$('#tips').innerHTML = TIPS.map(t => `<details><summary><span>${t.te} <span class="en">${t.en}</span></span></summary><ul>${t.items.map(i => `<li>${i[0]}<span class="en" style="display:block">${i[1]}</span></li>`).join('')}</ul></details>`).join('');
+
+/* ---------- buttons ---------- */
+$('#btnStart').addEventListener('click', startCompass);
+$('#btnHold').addEventListener('click', () => {
+  hold = !hold;
+  $('#btnHold').setAttribute('aria-pressed', hold);
+  $('#btnHold').innerHTML = hold ? 'వదులు <span class="en">Release</span>' : 'నిలుపు <span class="en">Hold</span>';
+  document.body.classList.toggle('hold-on', hold);
+  if (!hold) requestDraw();
+});
+
+/* ---------- init ---------- */
+buildDial();
+$$('[data-typeseg] button').forEach(b => b.setAttribute('aria-pressed', b.dataset.type === S.type ? 'true' : 'false'));
+draw(); renderFacing(); renderCheck(); renderGuide();
+const startView = {'#facing':'v-facing','#check':'v-check','#guide':'v-guide'}[location.hash] || window.__startView;
+if (startView) showView(startView);
+if (window.__startSheet) openSheet(window.__startSheet);
+if (window.__startScroll) { const el = document.querySelector(window.__startScroll); if (el) el.scrollIntoView(); }
+if (window.__startHeading != null) { heading = window.__startHeading; draw(); }
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
+window.__vastu = {zoneOf, rateItem, collect, renderFacing, renderCheck, renderGuide, openSheet, showView, setHeading: h => { heading = h; draw(); }, S: () => S, setS: o => { S = Object.assign(blank(), o); }};
+})();
+
+</script>
+</body>
+</html>
